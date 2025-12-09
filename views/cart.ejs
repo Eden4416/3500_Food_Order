@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Food Order | My Cart</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .food-bg {
+            background: linear-gradient(135deg, #fff8e1 0%, #fff3e0 100%);
+            min-height: 100vh;
+            position: relative;
+        }
+        
+        .food-icons {
+            position: fixed;  
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            top: 0;
+            left: 0;
+            overflow: hidden; 
+        }
+        
+        .food-icons i {
+            position: absolute;
+            font-size: 2rem;
+            color: rgba(255, 87, 34, 0.1);
+            animation: float 20s infinite linear;
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0) rotate(0deg); }
+            100% { transform: translateY(-1000px) rotate(360deg); }
+        }
+        
+        .card {
+            background: white;
+            border-radius: 24px;
+            box-shadow: 
+                0 10px 25px rgba(255, 152, 0, 0.1),
+                0 5px 15px rgba(255, 152, 0, 0.05);
+            overflow: hidden;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(to right, #FF9800, #FF5722);
+        }
+        
+        .gradient-text {
+            background: linear-gradient(to right, #FF9800, #FF5722);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(to right, #FF9800, #FF5722);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 152, 0, 0.2);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 152, 0, 0.3);
+        }
+        
+        .btn-secondary {
+            background: white;
+            color: #5D4037;
+            border: 2px solid #FF9800;
+            padding: 10px 20px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-secondary:hover {
+            background: #fff8e1;
+            transform: translateY(-2px);
+        }
+        
+        .btn-danger {
+            background: linear-gradient(to right, #ff4444, #cc0000);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.875rem;
+        }
+        
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 68, 68, 0.3);
+        }
+        
+        .cart-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px;
+            border-bottom: 1px solid #f0f0f0;
+            transition: background-color 0.3s ease;
+        }
+        
+        .cart-item:hover {
+            background-color: #fffaf0;
+        }
+        
+        .cart-item:last-child {
+            border-bottom: none;
+        }
+        
+        .empty-cart {
+            padding: 60px 40px;
+            text-align: center;
+            color: #8D6E63;
+        }
+        
+        .empty-cart i {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            color: #FFD180;
+        }
+        
+        .price-tag {
+            background: linear-gradient(to right, #FFE0B2, #FFCC80);
+            color: #5D4037;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+        
+        .total-card {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 8px 20px rgba(255, 152, 0, 0.1);
+            border: 2px solid #FFE0B2;
+        }
+
+        <%
+            const icons = ['fa-shopping-cart', 'fa-utensils', 'fa-pizza-slice', 'fa-hamburger', 'fa-burger', 'fa-mug-hot', 'fa-cookie', 'fa-ice-cream'];
+        %>
+        
+        <% for(let i = 0; i < 15; i++) { %>
+            .food-icons i:nth-child(<%= i + 1 %>) {
+                left: <%= Math.random() * 100 %>%;
+                top: <%= Math.random() * 100 %>%;
+                animation-delay: <%= Math.random() * 20 %>s;
+                font-size: <%= Math.random() * 2 + 1.5 %>rem;
+            }
+        <% } %>
+    </style>
+</head>
+<body class="food-bg">
+    <div class="food-icons">
+        <% for(let i = 0; i < 15; i++) { %>
+            <i class="fas <%= icons[Math.floor(Math.random() * icons.length)] %>"></i>
+        <% } %>
+    </div>
+
+    <div class="container mx-auto px-4 py-8 relative z-10">
+        <div class="flex items-center justify-between mb-8">
+            <div>
+                <h1 class="text-4xl font-bold gradient-text">Your Shopping Cart</h1>
+                <p class="text-[#8D6E63] mt-2">Review your items before checkout</p>
+            </div>
+            <a href="javascript:history.back()" class="btn-secondary inline-flex items-center">
+                <i class="fas fa-arrow-left mr-2"></i> Back
+            </a>
+        </div>
+        
+        <% if (!cart || cart.items.length === 0) { %>
+            <div class="card max-w-2xl mx-auto">
+                <div class="empty-cart">
+                    <i class="fas fa-shopping-cart"></i>
+                    <h2 class="text-2xl font-bold text-[#5D4037] mb-4">Your cart is empty</h2>
+                    <p class="text-[#8D6E63] mb-8">Looks like you haven't added any items yet. Start exploring restaurants!</p>
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                        <a href="/restaurants" class="btn-primary inline-flex items-center">
+                            <i class="fas fa-store mr-2"></i> Browse Restaurants
+                        </a>
+                        <a href="/orders" class="btn-secondary inline-flex items-center">
+                            <i class="fas fa-history mr-2"></i> View Order History
+                        </a>
+                    </div>
+                </div>
+            </div>
+        <% } else { %>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div class="lg:col-span-2">
+                    <div class="card overflow-hidden">
+                        <div class="bg-[#FFF3E0] px-6 py-4 border-b border-[#FFE0B2]">
+                            <h3 class="text-xl font-semibold text-[#5D4037]">
+                                <i class="fas fa-list mr-2"></i> Cart Items (<%= cart.items.length %>)
+                            </h3>
+                        </div>
+                        
+                        <div>
+                            <% cart.items.forEach(i => { %>
+                                <div class="cart-item">
+                                    <div class="flex items-center space-x-4">
+                                        <div class="w-16 h-16 bg-gradient-to-br from-[#FFE0B2] to-[#FFCC80] rounded-xl flex items-center justify-center">
+                                            <i class="fas fa-utensils text-2xl text-[#FF5722]"></i>
+                                        </div>
+                                        <div>
+                                            <h4 class="font-bold text-[#5D4037] text-lg"><%= i.name %></h4>
+                                            <p class="text-[#8D6E63] text-sm">Item ID: #<%= i.itemId %></p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="text-right">
+                                        <div class="flex items-center space-x-6">
+                                            <div>
+                                                <p class="font-bold text-[#5D4037]">$<%= (i.price * i.qty).toFixed(2) %></p>
+                                                <p class="text-sm text-[#8D6E63]">$<%= i.price %> x <%= i.qty %></p>
+                                            </div>
+                                            
+                                            <form action="/cart/remove" method="POST" class="inline-block">
+                                                <input type="hidden" name="itemId" value="<%= i.itemId %>">
+                                                <button type="submit" class="btn-danger inline-flex items-center">
+                                                    <i class="fas fa-trash mr-2"></i> Remove
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            <% }) %>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="total-card sticky top-8">
+                        <h3 class="text-2xl font-bold text-[#5D4037] mb-6">Order Summary</h3>
+                        
+                        <div class="space-y-4 mb-8">
+                            <div class="flex justify-between items-center py-3 border-b border-dashed border-[#FFE0B2]">
+                                <span class="text-[#5D4037]">Subtotal</span>
+                                <span class="font-semibold">$<%= (cart.totalPrice * 0.9).toFixed(2) %></span>
+                            </div>
+                            
+                            <div class="flex justify-between items-center py-3 border-b border-dashed border-[#FFE0B2]">
+                                <span class="text-[#5D4037]">Delivery Fee</span>
+                                <span class="font-semibold">$2.99</span>
+                            </div>
+                            
+                            <div class="flex justify-between items-center py-3 border-b border-dashed border-[#FFE0B2]">
+                                <span class="text-[#5D4037]">Service Fee</span>
+                                <span class="font-semibold">$1.50</span>
+                            </div>
+                            
+                            <div class="flex justify-between items-center py-3">
+                                <span class="text-lg font-bold text-[#5D4037]">Total</span>
+                                <div class="price-tag">$<%= (cart.totalPrice + 2.99 + 1.50).toFixed(2) %></div>
+                            </div>
+                        </div>
+                        
+                        <form action="/cart/checkout" method="POST">
+                            <button type="submit" class="btn-primary w-full py-4 text-lg inline-flex items-center justify-center">
+                                <i class="fas fa-credit-card mr-3"></i> Place Order
+                                <span class="ml-auto">$<%= (cart.totalPrice + 2.99 + 1.50).toFixed(2) %></span>
+                            </button>
+                        </form>
+                        
+                        <p class="text-center text-sm text-[#8D6E63] mt-4">
+                            <i class="fas fa-lock mr-1"></i> Secure checkout • 256-bit SSL encryption
+                        </p>
+                        
+                        <div class="mt-8 pt-6 border-t border-[#FFE0B2]">
+                            <h4 class="font-bold text-[#5D4037] mb-3">Accepted Payment Methods</h4>
+                            <div class="flex space-x-3">
+                                <div class="w-10 h-6 bg-gray-200 rounded flex items-center justify-center text-xs font-bold">VISA</div>
+                                <div class="w-10 h-6 bg-gray-200 rounded flex items-center justify-center text-xs font-bold">MC</div>
+                                <div class="w-10 h-6 bg-gray-200 rounded flex items-center justify-center text-xs font-bold">AMEX</div>
+                                <div class="w-10 h-6 bg-gray-200 rounded flex items-center justify-center text-xs">
+                                    <i class="fab fa-cc-paypal text-blue-500"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-6 text-center">
+                        <a href="/restaurants" class="inline-flex items-center text-[#FF5722] font-medium hover:underline">
+                            <i class="fas fa-plus mr-2"></i> Add more items
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-8 bg-gradient-to-r from-[#FFF3E0] to-[#FFECB3] rounded-xl p-6 border border-[#FFE0B2]">
+                <div class="flex items-start">
+                    <i class="fas fa-shield-alt text-2xl text-[#FF9800] mr-4 mt-1"></i>
+                    <div>
+                        <h4 class="font-bold text-[#5D4037] mb-2">Safe & Secure Checkout</h4>
+                        <p class="text-[#8D6E63] text-sm">Your payment information is encrypted and secure. We never store your full credit card details on our servers.</p>
+                    </div>
+                </div>
+            </div>
+        <% } %>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const cartItems = document.querySelectorAll('.cart-item');
+            cartItems.forEach((item, index) => {
+                item.style.opacity = '0';
+                item.style.transform = 'translateX(-20px)';
+                
+                setTimeout(() => {
+                    item.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                    item.style.opacity = '1';
+                    item.style.transform = 'translateX(0)';
+                }, index * 100);
+            });
+
+            const removeButtons = document.querySelectorAll('.btn-danger');
+            removeButtons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    if (!confirm('Are you sure you want to remove this item from your cart?')) {
+                        e.preventDefault();
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

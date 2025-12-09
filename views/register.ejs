@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #fff8e1 0%, #fff3e0 100%);
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .food-bg {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(255, 152, 0, 0.05) 0%, transparent 20%),
+        radial-gradient(circle at 90% 40%, rgba(255, 193, 7, 0.05) 0%, transparent 20%),
+        radial-gradient(circle at 50% 80%, rgba(255, 235, 59, 0.05) 0%, transparent 20%);
+      background-repeat: no-repeat;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .title {
+      position: absolute;
+      top: 90px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 4.8rem;
+      font-weight: 900;
+      color: #FF6F00;
+      text-shadow: 0 0 30px rgba(255, 111, 0, 0.2);
+      z-index: 20;
+      letter-spacing: -2px;
+    }
+
+    .card {
+      background: linear-gradient(145deg, #ffffff 0%, #fff9f0 100%);
+      border-radius: 36px;
+      padding: 60px 70px 90px;
+      width: 100%;
+      max-width: 500px;
+      box-shadow: 
+        0 25px 60px rgba(255, 152, 0, 0.15),
+        0 0 0 1px rgba(255, 152, 0, 0.1);
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 6px;
+      background: linear-gradient(90deg, #FF9800 0%, #FFB74D 100%);
+    }
+
+    .card-header {
+      flex: 0 0 auto;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .register-title {
+      font-size: 3.5rem;
+      font-weight: 900;
+      background: linear-gradient(135deg, #FF9800 0%, #FF5722 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: -2px;
+      line-height: 1;
+      margin: 0 0 20px 0;
+      padding: 0;
+    }
+
+    .card-body {
+      flex: 1 0 auto;
+      margin-top: 10px;
+    }
+
+    label {
+      display: block;
+      font-size: 1.35rem;
+      font-weight: 600;
+      color: #5D4037;
+      margin-bottom: 12px;
+    }
+
+    input {
+      width: 100%;
+      padding: 22px 26px;
+      margin-bottom: 40px;
+      border: 2px solid #FFE0B2;
+      border-radius: 20px;
+      font-size: 1.35rem;
+      background: #FFF8E1;
+      transition: all 0.3s;
+      color: #5D4037;
+    }
+    input:focus {
+      outline: none;
+      border-color: #FF9800;
+      background: white;
+      box-shadow: 0 0 0 6px rgba(255, 152, 0, 0.15);
+    }
+
+    input::placeholder {
+      color: #BCAAA4;
+    }
+
+    .error {
+      background: #FFEBEE;
+      color: #D32F2F;
+      padding: 18px;
+      border-radius: 20px;
+      text-align: center;
+      margin: 10px 0 30px;
+      font-weight: 600;
+      font-size: 1.2rem;
+      border: 1px solid #FFCDD2;
+    }
+
+    .card-footer {
+      flex: 0 0 auto;
+      margin-top: auto;
+      padding-top: 40px;
+    }
+
+    .register-btn {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, #FF9800 0%, #FFB74D 100%);
+      color: white;
+      border: none;
+      border-radius: 35px;
+      font-size: 1.1rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all 0.3s;
+      margin-top: 0;
+      box-shadow: 0 6px 20px rgba(255, 152, 0, 0.3);
+    }
+    .register-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 25px rgba(255, 152, 0, 0.4);
+      background: linear-gradient(135deg, #F57C00 0%, #FF9800 100%);
+    }
+
+    .login-btn {
+      width: 100%;
+      padding: 16px;
+      background: transparent;
+      color: #FF9800;
+      border: 2px solid #FFB74D;
+      border-radius: 35px;
+      font-size: 1.1rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all 0.3s;
+      margin-top: 15px;
+    }
+    .login-btn:hover {
+      background: linear-gradient(135deg, #FF9800 0%, #FFB74D 100%);
+      color: white;
+      transform: translateY(-3px);
+      box-shadow: 0 12px 25px rgba(255, 152, 0, 0.3);
+    }
+
+    .food-icons {
+      position: absolute;
+      top: 30px;
+      right: 30px;
+      display: flex;
+      gap: 10px;
+    }
+    .food-icon {
+      font-size: 24px;
+      opacity: 0.3;
+    }
+  </style>
+</head>
+<body>
+  <div class="food-bg"></div>
+  <div class="title">Food Order</div>
+
+  <div class="card">
+    <div class="food-icons">
+      <div class="food-icon">🍜</div>
+      <div class="food-icon">🍣</div>
+      <div class="food-icon">🍰</div>
+    </div>
+    
+    <div class="card-header">
+      <h1 class="register-title">Register</h1>
+    </div>
+    
+    <div class="card-body">
+      <form action="/register" method="POST">
+        <label>Full Name:</label>
+        <input type="text" name="name" required>
+
+        <label>Username:</label>
+        <input type="text" name="username" required>
+
+        <label>Password:</label>
+        <input type="password" name="password" required>
+
+        <% if (typeof error !== 'undefined' && error) { %>
+          <div class="error"><%= error %></div>
+        <% } %>
+        
+        <div class="card-footer">
+          <button type="submit" class="register-btn">Register</button>
+          <button type="button" onclick="window.location.href='/login'" class="login-btn">Back to Login</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</body>
+</html>

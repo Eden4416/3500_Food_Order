@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manage Restaurants - Food Order Admin</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: linear-gradient(135deg, #fff8e1 0%, #fff3e0 100%);
+      color: #1d1d1f;
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+    }
+
+    .food-bg {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(255, 152, 0, 0.03) 0%, transparent 20%),
+        radial-gradient(circle at 90% 40%, rgba(255, 193, 7, 0.03) 0%, transparent 20%),
+        radial-gradient(circle at 50% 80%, rgba(255, 235, 59, 0.03) 0%, transparent 20%);
+      background-repeat: no-repeat;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 40px 24px 80px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 40px;
+      padding: 0 20px;
+    }
+
+    .main-title {
+      font-size: 2.8rem;
+      font-weight: 900;
+      background: linear-gradient(135deg, #FF9800 0%, #FF5722 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin: 0;
+      letter-spacing: -1px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 32px;
+      background: linear-gradient(135deg, #FF9800 0%, #FFB74D 100%);
+      color: white;
+      border: none;
+      border-radius: 35px;
+      font-size: 1.1rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-decoration: none;
+      box-shadow: 0 6px 20px rgba(255, 152, 0, 0.3);
+    }
+
+    .back-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 25px rgba(255, 152, 0, 0.4);
+      background: linear-gradient(135deg, #F57C00 0%, #FF9800 100%);
+    }
+
+    .add-section {
+      background: linear-gradient(145deg, #ffffff 0%, #fff9f0 100%);
+      border-radius: 20px;
+      padding: 30px;
+      margin-bottom: 50px;
+      box-shadow: 
+        0 15px 35px rgba(255, 152, 0, 0.1),
+        0 0 0 1px rgba(255, 152, 0, 0.1);
+      border: 1px solid rgba(255, 184, 77, 0.2);
+      position: relative;
+    }
+
+    .add-section::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 6px;
+      background: linear-gradient(90deg, #FF9800 0%, #FFB74D 100%);
+    }
+
+    .section-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #5D4037;
+      margin-bottom: 25px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .add-form {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+    }
+
+    .add-form input {
+      padding: 16px 20px;
+      border: 2px solid #FFE0B2;
+      border-radius: 15px;
+      font-size: 1rem;
+      background: #FFF8E1;
+      color: #5D4037;
+      transition: all 0.3s;
+    }
+
+    .add-form input:focus {
+      outline: none;
+      border-color: #FF9800;
+      background: white;
+      box-shadow: 0 0 0 4px rgba(255, 152, 0, 0.15);
+    }
+
+    .add-form input::placeholder {
+      color: #BCAAA4;
+    }
+
+    .add-form button {
+      grid-column: 1 / -1;
+      padding: 16px;
+      background: linear-gradient(135deg, #FF9800 0%, #FFB74D 100%);
+      color: white;
+      border: none;
+      border-radius: 15px;
+      font-size: 1.1rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: 0 6px 20px rgba(255, 152, 0, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .add-form button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 25px rgba(255, 152, 0, 0.4);
+      background: linear-gradient(135deg, #F57C00 0%, #FF9800 100%);
+    }
+
+    .restaurants-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      gap: 25px;
+      padding: 0 20px;
+    }
+
+    .restaurant-card {
+      background: linear-gradient(145deg, #ffffff 0%, #fff9f0 100%);
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 
+        0 10px 30px rgba(255, 152, 0, 0.1),
+        0 0 0 1px rgba(255, 152, 0, 0.1);
+      border: 1px solid rgba(255, 184, 77, 0.2);
+      transition: all 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .restaurant-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 6px;
+      background: linear-gradient(90deg, #FF9800 0%, #FFB74D 100%);
+    }
+
+    .restaurant-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 
+        0 20px 40px rgba(255, 152, 0, 0.2),
+        0 0 0 1px rgba(255, 152, 0, 0.15);
+    }
+
+    .restaurant-header {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 2px solid #FFECB3;
+    }
+
+    .restaurant-icon {
+      width: 60px;
+      height: 60px;
+      border-radius: 15px;
+      background: linear-gradient(135deg, #FFF8E1 0%, #FFECB3 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+      color: #FF9800;
+      box-shadow: 0 6px 15px rgba(255, 152, 0, 0.2);
+    }
+
+    .restaurant-info {
+      flex: 1;
+    }
+
+    .restaurant-name {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #5D4037;
+      margin-bottom: 5px;
+    }
+
+    .owner-label {
+      font-size: 0.9rem;
+      color: #8D6E63;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .restaurant-detail {
+      display: flex;
+      justify-content: space-between;
+      padding: 12px 0;
+      border-bottom: 1px solid #FFECB3;
+      font-size: 0.95rem;
+    }
+
+    .restaurant-detail:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .detail-label {
+      color: #8D6E63;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .detail-value {
+      font-weight: 700;
+      color: #5D4037;
+    }
+
+    .delete-form {
+      margin-top: 25px;
+    }
+
+    .delete-btn {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, #ff4444 0%, #ff6666 100%);
+      color: white;
+      border: none;
+      border-radius: 15px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: 0 6px 20px rgba(255, 68, 68, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .delete-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 25px rgba(255, 68, 68, 0.3);
+      background: linear-gradient(135deg, #dd3333 0%, #ff4444 100%);
+    }
+
+    .message {
+      text-align: center;
+      padding: 60px 20px;
+      font-size: 1.2rem;
+      color: #8D6E63;
+      grid-column: 1 / -1;
+    }
+
+    .food-icons {
+      position: fixed;
+      top: 30px;
+      right: 30px;
+      display: flex;
+      gap: 12px;
+      z-index: 3;
+    }
+
+    .food-icon {
+      font-size: 28px;
+      opacity: 0.2;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        padding: 30px 16px 60px;
+      }
+      
+      .header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 20px;
+      }
+      
+      .main-title {
+        font-size: 2.2rem;
+      }
+      
+      .add-form {
+        grid-template-columns: 1fr;
+      }
+      
+      .restaurants-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+      
+      .food-icons {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="food-bg"></div>
+
+  <div class="food-icons">
+    <div class="food-icon">🏪</div>
+    <div class="food-icon">🍽️</div>
+    <div class="food-icon">👨‍🍳</div>
+  </div>
+
+  <div class="container">
+    <div class="header">
+      <h1 class="main-title">
+        <i class="fas fa-store"></i> Manage Restaurants
+      </h1>
+      <a href="/" class="back-btn">
+        <i class="fas fa-arrow-left"></i> Back to Dashboard
+      </a>
+    </div>
+
+    <div class="add-section">
+      <h2 class="section-title">
+        <i class="fas fa-plus-circle"></i> Add New Restaurant
+      </h2>
+      <form action="/admin/restaurants/add" method="POST" class="add-form">
+        <input name="name" placeholder="Restaurant Name" required>
+        <input name="address" placeholder="Address">
+        <input name="phone" placeholder="Phone">
+        <input name="ownerId" placeholder="Owner User ID" required>
+        <button type="submit">
+          <i class="fas fa-plus"></i> Add Restaurant
+        </button>
+      </form>
+    </div>
+
+    <div class="restaurants-grid">
+      <% if (!rests || rests.length === 0) { %>
+        <div class="message">
+          <i class="fas fa-store-slash" style="font-size: 3rem; color: #FFB74D; margin-bottom: 20px;"></i>
+          <h3 style="font-size: 1.5rem; margin-bottom: 15px; color: #5D4037;">No Restaurants Available</h3>
+          <p style="color: #8D6E63;">Start by adding your first restaurant using the form above.</p>
+        </div>
+      <% } else { %>
+        <% rests.forEach(r => { %>
+          <div class="restaurant-card">
+            <div class="restaurant-header">
+              <div class="restaurant-icon">
+                <i class="fas fa-store"></i>
+              </div>
+              <div class="restaurant-info">
+                <div class="restaurant-name"><%= r.name %></div>
+                <% if (r.owner) { %>
+                <div class="owner-label">
+                  <i class="fas fa-user-tie"></i> Owned by <%= r.owner.name %>
+                </div>
+                <% } %>
+              </div>
+            </div>
+
+            <% if (r.address) { %>
+            <div class="restaurant-detail">
+              <span class="detail-label"><i class="fas fa-map-marker-alt"></i> Address</span>
+              <span class="detail-value"><%= r.address %></span>
+            </div>
+            <% } %>
+
+            <% if (r.phone) { %>
+            <div class="restaurant-detail">
+              <span class="detail-label"><i class="fas fa-phone"></i> Phone</span>
+              <span class="detail-value"><%= r.phone %></span>
+            </div>
+            <% } %>
+
+            <div class="restaurant-detail">
+              <span class="detail-label"><i class="fas fa-id-badge"></i> Owner ID</span>
+              <span class="detail-value"><%= r.ownerId || 'N/A' %></span>
+            </div>
+
+            <% if (r.createdAt) { %>
+            <div class="restaurant-detail">
+              <span class="detail-label"><i class="fas fa-calendar-plus"></i> Added on</span>
+              <span class="detail-value"><%= new Date(r.createdAt).toLocaleDateString() %></span>
+            </div>
+            <% } %>
+
+            <form action="/admin/restaurants/delete/<%= r._id %>" method="POST" class="delete-form">
+              <button type="submit" class="delete-btn" onclick="return confirm('Are you sure you want to delete this restaurant?')">
+                <i class="fas fa-trash-alt"></i> Delete Restaurant
+              </button>
+            </form>
+          </div>
+        <% }) %>
+      <% } %>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const cards = document.querySelectorAll('.restaurant-card');
+      cards.forEach((card, index) => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(20px)';
+        
+        setTimeout(() => {
+          card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+          card.style.opacity = '1';
+          card.style.transform = 'translateY(0)';
+        }, 100 + index * 50);
+      });
+
+      const foodIcons = document.querySelectorAll('.food-icon');
+      foodIcons.forEach((icon, index) => {
+        setInterval(() => {
+          icon.style.transform = `translateY(${Math.sin(Date.now() / 1000 + index) * 5}px)`;
+        }, 100);
+      });
+
+      const deleteForms = document.querySelectorAll('.delete-form');
+      deleteForms.forEach(form => {
+        form.addEventListener('submit', function(e) {
+          if (!confirm('Are you sure you want to delete this restaurant? This action cannot be undone.')) {
+            e.preventDefault();
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>

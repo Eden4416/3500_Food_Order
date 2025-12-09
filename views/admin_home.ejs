@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard - Food Order</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: linear-gradient(135deg, #fff8e1 0%, #fff3e0 100%);
+      color: #1d1d1f;
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+    }
+
+    .food-bg {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(255, 152, 0, 0.03) 0%, transparent 20%),
+        radial-gradient(circle at 90% 40%, rgba(255, 193, 7, 0.03) 0%, transparent 20%),
+        radial-gradient(circle at 50% 80%, rgba(255, 235, 59, 0.03) 0%, transparent 20%);
+      background-repeat: no-repeat;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 60px 24px 120px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding: 0 20px;
+    }
+
+    .main-title {
+      font-size: 3.2rem;
+      font-weight: 900;
+      background: linear-gradient(135deg, #FF9800 0%, #FF5722 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin: 0;
+      letter-spacing: -1px;
+    }
+
+    .logout-btn {
+      padding: 14px 32px;
+      background: linear-gradient(135deg, #FF9800 0%, #FFB74D 100%);
+      color: white;
+      border: none;
+      border-radius: 35px;
+      font-size: 1.1rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-decoration: none;
+      display: inline-block;
+      box-shadow: 0 6px 20px rgba(255, 152, 0, 0.3);
+    }
+    .logout-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 25px rgba(255, 152, 0, 0.4);
+      background: linear-gradient(135deg, #F57C00 0%, #FF9800 100%);
+    }
+
+    .divider {
+      height: 2px;
+      background: linear-gradient(90deg, #FF9800 0%, #FFB74D 100%);
+      margin: 40px 20px 60px;
+      opacity: 0.3;
+      border-radius: 1px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 32px;
+      padding: 0 20px;
+    }
+
+    .card {
+      background: linear-gradient(145deg, #ffffff 0%, #fff9f0 100%);
+      border-radius: 24px;
+      padding: 36px 28px;
+      text-align: center;
+      box-shadow: 
+        0 15px 35px rgba(255, 152, 0, 0.1),
+        0 0 0 1px rgba(255, 152, 0, 0.1);
+      border: 1px solid rgba(255, 184, 77, 0.2);
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 280px;
+    }
+
+    .card:hover {
+      transform: translateY(-12px);
+      box-shadow: 
+        0 25px 50px rgba(255, 152, 0, 0.2),
+        0 0 0 1px rgba(255, 152, 0, 0.15);
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 6px;
+      background: linear-gradient(90deg, #FF9800 0%, #FFB74D 100%);
+    }
+
+    .card-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 24px;
+      background: linear-gradient(135deg, #FFF8E1 0%, #FFECB3 100%);
+      border-radius: 50%;
+      font-size: 2.5rem;
+      color: #FF9800;
+      box-shadow: 0 8px 20px rgba(255, 152, 0, 0.2);
+      transition: all 0.4s;
+    }
+
+    .card:hover .card-icon {
+      transform: scale(1.15);
+      background: linear-gradient(135deg, #FFECB3 0%, #FFE082 100%);
+    }
+
+    .card h3 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      margin: 0 0 16px;
+      color: #5D4037;
+      line-height: 1.3;
+    }
+
+    .card p {
+      font-size: 1rem;
+      color: #8D6E63;
+      margin: 0 0 28px;
+      line-height: 1.6;
+      opacity: 0.9;
+      flex-grow: 1;
+    }
+
+    .card-action {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 14px 28px;
+      background: linear-gradient(135deg, #FF9800 0%, #FFB74D 100%);
+      color: white;
+      border: none;
+      border-radius: 35px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-decoration: none;
+      box-shadow: 0 6px 20px rgba(255, 152, 0, 0.3);
+      letter-spacing: 0.5px;
+      margin-top: auto;
+    }
+    .card-action:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 25px rgba(255, 152, 0, 0.4);
+      background: linear-gradient(135deg, #F57C00 0%, #FF9800 100%);
+    }
+
+    .food-icons {
+      position: fixed;
+      top: 30px;
+      right: 30px;
+      display: flex;
+      gap: 12px;
+      z-index: 3;
+    }
+    .food-icon {
+      font-size: 28px;
+      opacity: 0.2;
+      transition: opacity 0.3s;
+    }
+    .food-icon:hover {
+      opacity: 0.4;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        padding: 30px 16px 60px;
+      }
+      
+      .header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 20px;
+      }
+      
+      .main-title {
+        font-size: 2.5rem;
+      }
+      
+      .grid {
+        grid-template-columns: 1fr;
+        gap: 24px;
+      }
+      
+      .food-icons {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="food-bg"></div>
+  <div class="food-icons">
+    <div class="food-icon">👨‍🍳</div>
+    <div class="food-icon">📊</div>
+    <div class="food-icon">⚙️</div>
+  </div>
+
+  <div class="container">
+    <div class="header">
+      <h1 class="main-title">Admin Dashboard</h1>
+      <a href="/logout" class="logout-btn">Logout</a>
+    </div>
+
+    <div class="divider"></div>
+    <div class="grid">
+      <div class="card">
+        <div class="card-icon">
+          <i class="fas fa-users"></i>
+        </div>
+        <h3>View All Users</h3>
+        <p>Browse and manage all registered users in the system</p>
+        <a href="/admin/users" class="card-action">
+          <i class="fas fa-arrow-right"></i> View Users
+        </a>
+      </div>
+
+      <div class="card">
+        <div class="card-icon">
+          <i class="fas fa-user-tag"></i>
+        </div>
+        <h3>Manage User Roles</h3>
+        <p>Assign and modify user permissions and access levels</p>
+        <a href="/admin/users/manage" class="card-action">
+          <i class="fas fa-arrow-right"></i> Manage Roles
+        </a>
+      </div>
+
+      <div class="card">
+        <div class="card-icon">
+          <i class="fas fa-store"></i>
+        </div>
+        <h3>Manage Restaurants</h3>
+        <p>Add, edit or remove restaurants from the platform</p>
+        <a href="/admin/restaurants" class="card-action">
+          <i class="fas fa-arrow-right"></i> Manage Restaurants
+        </a>
+      </div>
+
+      <div class="card">
+        <div class="card-icon">
+          <i class="fas fa-shopping-bag"></i>
+        </div>
+        <h3>Manage Orders</h3>
+        <p>View, track and process customer orders</p>
+        <a href="/admin/orders" class="card-action">
+          <i class="fas fa-arrow-right"></i> Manage Orders
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const cards = document.querySelectorAll('.card');
+      cards.forEach((card, index) => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(20px)';
+
+        setTimeout(() => {
+          card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+          card.style.opacity = '1';
+          card.style.transform = 'translateY(0)';
+        }, 100 + index * 100);
+      });
+
+      const foodIcons = document.querySelectorAll('.food-icon');
+      foodIcons.forEach((icon, index) => {
+        setInterval(() => {
+          icon.style.transform = `translateY(${Math.sin(Date.now() / 1000 + index) * 5}px)`;
+        }, 100);
+      });
+    });
+  </script>
+</body>
+</html>

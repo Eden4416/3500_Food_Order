@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Food Order | Payment</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .food-bg {
+            background: linear-gradient(135deg, #fff8e1 0%, #fff3e0 100%);
+            min-height: 100vh;
+            position: relative;
+        }
+        
+        .food-icons {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            top: 0;
+            left: 0;
+            overflow: hidden;
+        }
+        
+        .food-icons i {
+            position: absolute;
+            font-size: 2rem;
+            color: rgba(255, 87, 34, 0.1);
+            animation: float 20s infinite linear;
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0) rotate(0deg); }
+            100% { transform: translateY(-1000px) rotate(360deg); }
+        }
+        
+        .card {
+            background: white;
+            border-radius: 24px;
+            box-shadow: 
+                0 10px 25px rgba(255, 152, 0, 0.1),
+                0 5px 15px rgba(255, 152, 0, 0.05);
+            overflow: hidden;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(to right, #FF9800, #FF5722);
+        }
+        
+        .gradient-text {
+            background: linear-gradient(to right, #FF9800, #FF5722);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(to right, #FF9800, #FF5722);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 152, 0, 0.2);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 152, 0, 0.3);
+        }
+        
+        .btn-secondary {
+            background: white;
+            color: #5D4037;
+            border: 2px solid #FF9800;
+            padding: 10px 20px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-secondary:hover {
+            background: #fff8e1;
+            transform: translateY(-2px);
+        }
+        
+        .price-display {
+            background: linear-gradient(135deg, #4CAF50, #2E7D32);
+            color: white;
+            padding: 24px;
+            border-radius: 16px;
+            text-align: center;
+            box-shadow: 0 8px 20px rgba(76, 175, 80, 0.3);
+        }
+        
+        .qr-container {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            border: 2px dashed #FF9800;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .qr-placeholder {
+            width: 200px;
+            height: 200px;
+            background: linear-gradient(45deg, #f5f5f5, #e0e0e0);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .qr-placeholder::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(90deg, transparent 50%, rgba(255,152,0,0.1) 50%),
+                linear-gradient(transparent 50%, rgba(255,152,0,0.1) 50%);
+            background-size: 20px 20px;
+        }
+        
+        <%
+            const icons = ['fa-qrcode', 'fa-credit-card', 'fa-wallet', 'fa-money-bill-wave', 'fa-coins', 'fa-sack-dollar', 'fa-cash-register', 'fa-receipt'];
+        %>
+        
+        <% for(let i = 0; i < 15; i++) { %>
+            .food-icons i:nth-child(<%= i + 1 %>) {
+                left: <%= Math.random() * 100 %>%;
+                top: <%= Math.random() * 100 %>%;
+                animation-delay: <%= Math.random() * 20 %>s;
+                font-size: <%= Math.random() * 2 + 1.5 %>rem;
+            }
+        <% } %>
+    </style>
+</head>
+<body class="food-bg">
+    <div class="food-icons">
+        <% for(let i = 0; i < 15; i++) { %>
+            <i class="fas <%= icons[Math.floor(Math.random() * icons.length)] %>"></i>
+        <% } %>
+    </div>
+    
+    <div class="container mx-auto px-4 py-8 relative z-10">
+        <div class="max-w-2xl mx-auto">
+            <div class="text-center mb-8">
+                <h1 class="text-4xl font-bold gradient-text">Complete Your Payment</h1>
+                <p class="text-[#8D6E63] mt-2">Order ID: #<%= order._id.toString().substring(18, 24) %></p>
+            </div>
+            
+            <div class="card p-8">
+                <div class="mb-8">
+                    <div class="price-display mb-6">
+                        <p class="text-sm opacity-90">Total Amount Due</p>
+                        <h2 class="text-5xl font-bold mt-2">$<%= order.totalPrice %></h2>
+                    </div>
+                    
+                    <div class="bg-gray-50 rounded-xl p-6 mb-6">
+                        <h3 class="font-bold text-lg text-[#5D4037] mb-4 flex items-center">
+                            <i class="fas fa-info-circle text-[#FF9800] mr-2"></i> Payment Instructions
+                        </h3>
+                        <ul class="space-y-3 text-[#5D4037]">
+                            <li class="flex items-start">
+                                <i class="fas fa-check-circle text-[#4CAF50] mr-3 mt-1"></i>
+                                <span>Scan the QR code below using your mobile payment app</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check-circle text-[#4CAF50] mr-3 mt-1"></i>
+                                <span>Or manually enter the order ID: <code class="bg-gray-200 px-2 py-1 rounded">#<%= order._id.toString().substring(18, 24) %></code></span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check-circle text-[#4CAF50] mr-3 mt-1"></i>
+                                <span>Complete the payment within 15 minutes to avoid order cancellation</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="qr-container mb-8">
+                    <div class="qr-placeholder">
+                        <div class="text-center z-10">
+                            <i class="fas fa-qrcode text-6xl text-gray-400 mb-3"></i>
+                            <p class="text-gray-500 font-bold">QR Code</p>
+                            <p class="text-gray-400 text-sm mt-2">Scan to Pay</p>
+                        </div>
+                    </div>
+                    <p class="text-[#8D6E63] text-center">
+                        <i class="fas fa-mobile-alt mr-2"></i> Scan with your phone camera or payment app
+                    </p>
+                </div>
+                
+                <div class="mb-8">
+                    <h3 class="font-bold text-lg text-[#5D4037] mb-4">Accepted Payment Methods</h3>
+                    <div class="grid grid-cols-4 gap-3">
+                        <div class="bg-gray-100 p-4 rounded-lg flex items-center justify-center">
+                            <div class="w-12 h-8 bg-blue-600 text-white rounded flex items-center justify-center text-xs font-bold">VISA</div>
+                        </div>
+                        <div class="bg-gray-100 p-4 rounded-lg flex items-center justify-center">
+                            <div class="w-12 h-8 bg-red-600 text-white rounded flex items-center justify-center text-xs font-bold">MASTER</div>
+                        </div>
+                        <div class="bg-gray-100 p-4 rounded-lg flex items-center justify-center">
+                            <i class="fab fa-cc-paypal text-3xl text-blue-500"></i>
+                        </div>
+                        <div class="bg-gray-100 p-4 rounded-lg flex items-center justify-center">
+                            <i class="fab fa-apple-pay text-3xl text-black"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <form action="/orders/<%= order._id %>/pay/redirect" method="POST" class="mb-6">
+                    <button type="submit" class="btn-primary w-full py-4 text-lg inline-flex items-center justify-center mb-4">
+                        <i class="fas fa-check-circle mr-3"></i> Confirm Payment
+                        <span class="ml-auto">$<%= order.totalPrice %></span>
+                    </button>
+                    
+                    <p class="text-center text-sm text-[#8D6E63]">
+                        <i class="fas fa-lock mr-1"></i> 256-bit SSL encrypted • Secure payment gateway
+                    </p>
+                </form>
+                
+                <div class="bg-gradient-to-r from-[#FFF3E0] to-[#FFECB3] rounded-xl p-5 border border-[#FFE0B2]">
+                    <div class="flex items-start">
+                        <i class="fas fa-shield-alt text-2xl text-[#4CAF50] mr-4 mt-1"></i>
+                        <div>
+                            <h4 class="font-bold text-[#5D4037] mb-2">Payment Security</h4>
+                            <p class="text-[#8D6E63] text-sm">Your payment is processed securely. We do not store your credit card information. All transactions are encrypted.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-8 flex flex-wrap gap-4 justify-center">
+                <a href="/orders" class="btn-secondary inline-flex items-center">
+                    <i class="fas fa-arrow-left mr-2"></i> Back to Orders
+                </a>
+                <a href="/" class="btn-secondary inline-flex items-center">
+                    <i class="fas fa-home mr-2"></i> Back to Home
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const card = document.querySelector('.card');
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            
+            setTimeout(() => {
+                card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }, 200);
+            
+            const qrPlaceholder = document.querySelector('.qr-placeholder');
+            let angle = 0;
+            
+            function animateQR() {
+                angle = (angle + 0.5) % 360;
+                qrPlaceholder.style.background = 
+                    `linear-gradient(${angle}deg, #f5f5f5, #e0e0e0)`;
+                requestAnimationFrame(animateQR);
+            }
+            
+            animateQR();
+        });
+    </script>
+</body>
+</html>

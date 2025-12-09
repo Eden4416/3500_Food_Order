@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restaurants</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #FF9800, #FF5722);
+            --bg-gradient: linear-gradient(135deg, #fff8e1 0%, #fff3e0 100%);
+            --text-primary: #5D4037;
+            --text-secondary: #8D6E63;
+            --card-shadow: 0 10px 30px rgba(255, 152, 0, 0.15);
+            --card-shadow-hover: 0 20px 40px rgba(255, 152, 0, 0.25);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        body {
+            background: var(--bg-gradient);
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
+        
+        .food-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+            overflow: hidden;
+        }
+        
+        .food-icons {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            align-items: center;
+            opacity: 0.1;
+            font-size: 2rem;
+            color: #FF9800;
+            animation: floatIcons 20s infinite linear;
+        }
+        
+        @keyframes floatIcons {
+            0% { transform: translateY(0) rotate(0deg); }
+            100% { transform: translateY(-100px) rotate(360deg); }
+        }
+        
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 2rem;
+            background: white;
+            box-shadow: 0 4px 20px rgba(255, 152, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 700;
+            font-size: 1.5rem;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .logo i {
+            font-size: 2rem;
+        }
+        
+        .page-header {
+            text-align: center;
+            padding: 3rem 2rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 900;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .page-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background: var(--primary-gradient);
+            border-radius: 2px;
+        }
+        
+        .page-subtitle {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            font-weight: 400;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .restaurants-container {
+            max-width: 1200px;
+            margin: 0 auto 3rem;
+            padding: 0 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2rem;
+        }
+        
+        .restaurant-card {
+            background: white;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            cursor: pointer;
+            width: 100%;
+            max-width: 800px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .restaurant-card:hover {
+            transform: translateY(-10px) scale(1.01);
+            box-shadow: var(--card-shadow-hover);
+        }
+        
+        .restaurant-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 6px;
+            background: var(--primary-gradient);
+        }
+        
+        .restaurant-image {
+            width: 100%;
+            height: 300px; 
+            object-fit: cover;
+            background: linear-gradient(135deg, rgba(255, 152, 0, 0.1), rgba(255, 87, 34, 0.1));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #FF5722;
+            font-size: 4rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .restaurant-image i {
+            z-index: 1;
+            transition: transform 0.5s ease;
+        }
+        
+        .restaurant-card:hover .restaurant-image i {
+            transform: scale(1.1);
+        }
+        
+        .restaurant-info {
+            padding: 2.5rem; 
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+        
+        .restaurant-name {
+            font-size: 1.8rem; 
+            font-weight: 900;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            line-height: 1.3;
+        }
+        
+        .restaurant-details {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            margin-bottom: 2rem; 
+        }
+        
+        .restaurant-icon {
+            color: #FF9800;
+            font-size: 1.5rem; 
+            margin-top: 0.2rem;
+            flex-shrink: 0;
+        }
+        
+        .restaurant-address {
+            color: var(--text-secondary);
+            font-size: 1.1rem; 
+            line-height: 1.6;
+            flex: 1;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        .view-menu-btn {
+            width: 100%;
+            padding: 1rem; 
+            background: var(--primary-gradient);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: 700; 
+            font-size: 1.2rem; 
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem; 
+            text-decoration: none;
+            margin-top: auto;
+        }
+        
+        .view-menu-btn:hover {
+            transform: scale(1.03);
+            box-shadow: 0 8px 20px rgba(255, 87, 34, 0.4);
+        }
+        
+        .view-menu-btn i {
+            font-size: 1.3rem; 
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 5rem 2rem;
+            background: white;
+            border-radius: 24px;
+            box-shadow: var(--card-shadow);
+            max-width: 800px;
+            width: 100%;
+        }
+        
+        .empty-icon {
+            font-size: 5rem; 
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 2rem;
+        }
+        
+        .empty-title {
+            font-size: 2rem;
+            font-weight: 900;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+        }
+        
+        .empty-description {
+            color: var(--text-secondary);
+            font-size: 1.2rem;
+            max-width: 500px;
+            margin: 0 auto 2rem;
+            line-height: 1.6;
+        }
+        
+        .back-btn-container {
+            max-width: 1200px;
+            margin: 0 auto 4rem;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: center;
+        }
+        
+        .back-btn {
+            padding: 1rem 2.5rem; 
+            background: white;
+            border: 2px solid rgba(255, 152, 0, 0.2);
+            border-radius: 12px;
+            color: var(--text-secondary);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem; 
+            text-decoration: none;
+            font-size: 1.1rem; 
+        }
+        
+        .back-btn:hover {
+            background: var(--primary-gradient);
+            color: white;
+            border-color: transparent;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 152, 0, 0.2);
+        }
+        
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 1rem;
+            }
+            
+            .page-title {
+                font-size: 2rem;
+            }
+            
+            .restaurants-container {
+                padding: 0 1rem;
+            }
+            
+            .restaurant-image {
+                height: 250px; 
+                font-size: 3rem; 
+            }
+            
+            .restaurant-info {
+                padding: 1.5rem;
+            }
+            
+            .restaurant-name {
+                font-size: 1.6rem;
+            }
+            
+            .restaurant-address {
+                font-size: 1rem;
+            }
+            
+            .view-menu-btn {
+                padding: 0.875rem;
+                font-size: 1.1rem;
+            }
+            
+            .back-btn-container {
+                padding: 0 1rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .restaurant-details {
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+            
+            .restaurant-icon {
+                align-self: flex-start;
+            }
+            
+            .restaurant-image {
+                height: 200px;
+            }
+            
+            .empty-state {
+                padding: 3rem 1.5rem;
+            }
+            
+            .empty-icon {
+                font-size: 4rem;
+            }
+            
+            .empty-title {
+                font-size: 1.6rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="food-bg">
+        <div class="food-icons">
+            <i class="fas fa-utensils"></i>
+            <i class="fas fa-hamburger"></i>
+            <i class="fas fa-pizza-slice"></i>
+            <i class="fas fa-ice-cream"></i>
+            <i class="fas fa-coffee"></i>
+            <i class="fas fa-bread-slice"></i>
+            <i class="fas fa-cheese"></i>
+            <i class="fas fa-lemon"></i>
+            <i class="fas fa-drumstick-bite"></i>
+            <i class="fas fa-fish"></i>
+        </div>
+    </div>
+    
+    <nav class="navbar">
+        <div class="logo">
+            <i class="fas fa-utensils"></i>
+        </div>
+    </nav>
+    
+    <header class="page-header">
+        <h1 class="page-title">Restaurants</h1>
+        <p class="page-subtitle">Discover delicious food from our selection of partner restaurants</p>
+    </header>
+    
+    <div class="restaurants-container">
+        <% if (restaurants && restaurants.length > 0) { %>
+            <% restaurants.forEach(r => { %>
+            <div class="restaurant-card">
+                <div class="restaurant-image">
+                    <% 
+                    // 根据餐厅类型选择图标
+                    let restaurantIcon = 'fa-store';
+                    const restaurantName = r.name.toLowerCase();
+                    
+                    if (restaurantName.includes('pizza') || restaurantName.includes('italian')) restaurantIcon = 'fa-pizza-slice';
+                    else if (restaurantName.includes('burger') || restaurantName.includes('american')) restaurantIcon = 'fa-hamburger';
+                    else if (restaurantName.includes('sushi') || restaurantName.includes('japanese')) restaurantIcon = 'fa-fish';
+                    else if (restaurantName.includes('chinese') || restaurantName.includes('asian')) restaurantIcon = 'fa-bowl-rice';
+                    else if (restaurantName.includes('mexican') || restaurantName.includes('taco')) restaurantIcon = 'fa-pepper-hot';
+                    else if (restaurantName.includes('cafe') || restaurantName.includes('coffee')) restaurantIcon = 'fa-coffee';
+                    else if (restaurantName.includes('bakery') || restaurantName.includes('bread')) restaurantIcon = 'fa-bread-slice';
+                    else if (restaurantName.includes('ice cream') || restaurantName.includes('dessert')) restaurantIcon = 'fa-ice-cream';
+                    else if (restaurantName.includes('bbq') || restaurantName.includes('grill')) restaurantIcon = 'fa-fire';
+                    else if (restaurantName.includes('vegetarian') || restaurantName.includes('healthy')) restaurantIcon = 'fa-leaf';
+                    else if (restaurantName.includes('seafood') || restaurantName.includes('fish')) restaurantIcon = 'fa-fish';
+                    else if (restaurantName.includes('steak') || restaurantName.includes('meat')) restaurantIcon = 'fa-drumstick-bite';
+                    %>
+                    <i class="fas <%= restaurantIcon %>"></i>
+                </div>
+                
+                <div class="restaurant-info">
+                    <h3 class="restaurant-name"><%= r.name %></h3>
+                    
+                    <div class="restaurant-details">
+                        <div class="restaurant-icon">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                        <p class="restaurant-address"><%= r.address %></p>
+                    </div>
+                    
+                    <a href="/restaurants/<%= r._id %>" class="view-menu-btn">
+                        <i class="fas fa-book-open"></i>
+                        View Menu
+                    </a>
+                </div>
+            </div>
+            <% }) %>
+        <% } else { %>
+            <div class="empty-state">
+                <div class="empty-icon">
+                    <i class="fas fa-store"></i>
+                </div>
+                <h2 class="empty-title">No Restaurants Available</h2>
+                <p class="empty-description">There are no restaurants available at the moment. Please check back later.</p>
+            </div>
+        <% } %>
+    </div>
+    
+    <div class="back-btn-container">
+        <a href="/" class="back-btn">
+            <i class="fas fa-arrow-left"></i>
+            Back to Home
+        </a>
+    </div>
+</body>
+</html>

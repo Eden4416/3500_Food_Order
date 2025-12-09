@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manage User Roles - Food Order Admin</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: linear-gradient(135deg, #fff8e1 0%, #fff3e0 100%);
+      color: #1d1d1f;
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+    }
+
+    .food-bg {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(255, 152, 0, 0.03) 0%, transparent 20%),
+        radial-gradient(circle at 90% 40%, rgba(255, 193, 7, 0.03) 0%, transparent 20%),
+        radial-gradient(circle at 50% 80%, rgba(255, 235, 59, 0.03) 0%, transparent 20%);
+      background-repeat: no-repeat;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 40px 24px 80px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 40px;
+      padding: 0 20px;
+    }
+
+    .main-title {
+      font-size: 2.8rem;
+      font-weight: 900;
+      background: linear-gradient(135deg, #FF9800 0%, #FF5722 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin: 0;
+      letter-spacing: -1px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 32px;
+      background: linear-gradient(135deg, #FF9800 0%, #FFB74D 100%);
+      color: white;
+      border: none;
+      border-radius: 35px;
+      font-size: 1.1rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-decoration: none;
+      box-shadow: 0 6px 20px rgba(255, 152, 0, 0.3);
+    }
+
+    .back-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 25px rgba(255, 152, 0, 0.4);
+      background: linear-gradient(135deg, #F57C00 0%, #FF9800 100%);
+    }
+
+    .users-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      gap: 25px;
+      padding: 0 20px;
+    }
+
+    .user-card {
+      background: linear-gradient(145deg, #ffffff 0%, #fff9f0 100%);
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 
+        0 10px 30px rgba(255, 152, 0, 0.1),
+        0 0 0 1px rgba(255, 152, 0, 0.1);
+      border: 1px solid rgba(255, 184, 77, 0.2);
+      transition: all 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .user-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 6px;
+      background: linear-gradient(90deg, #FF9800 0%, #FFB74D 100%);
+    }
+
+    .user-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 
+        0 20px 40px rgba(255, 152, 0, 0.2),
+        0 0 0 1px rgba(255, 152, 0, 0.15);
+    }
+
+    .user-header {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 2px solid #FFECB3;
+    }
+
+    .user-avatar {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #FFF8E1 0%, #FFECB3 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+      color: #FF9800;
+      box-shadow: 0 6px 15px rgba(255, 152, 0, 0.2);
+    }
+
+    .user-info {
+      flex: 1;
+    }
+
+    .user-name {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #5D4037;
+      margin-bottom: 5px;
+    }
+
+    .user-username {
+      font-size: 0.95rem;
+      color: #8D6E63;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .current-role-section {
+      margin-bottom: 25px;
+    }
+
+    .role-label {
+      font-size: 0.9rem;
+      color: #8D6E63;
+      font-weight: 600;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .current-role {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      background: linear-gradient(135deg, #FFF8E1 0%, #FFECB3 100%);
+      color: #FF9800;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      font-weight: 700;
+    }
+
+    .role-form {
+      margin-top: 20px;
+    }
+
+    .form-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #5D4037;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .role-select {
+      display: flex;
+      gap: 15px;
+      align-items: center;
+    }
+
+    .role-select select {
+      flex: 1;
+      padding: 14px 18px;
+      border: 2px solid #FFE0B2;
+      border-radius: 15px;
+      font-size: 1rem;
+      background: #FFF8E1;
+      color: #5D4037;
+      font-weight: 600;
+      transition: all 0.3s;
+    }
+
+    .role-select select:focus {
+      outline: none;
+      border-color: #FF9800;
+      background: white;
+      box-shadow: 0 0 0 4px rgba(255, 152, 0, 0.15);
+    }
+
+    .update-btn {
+      padding: 0 28px;
+      background: linear-gradient(135deg, #FF9800 0%, #FFB74D 100%);
+      color: white;
+      border: none;
+      border-radius: 15px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s;
+      height: 50px;
+      box-shadow: 0 6px 20px rgba(255, 152, 0, 0.3);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .update-btn:hover {
+      background: linear-gradient(135deg, #F57C00 0%, #FF9800 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(255, 152, 0, 0.4);
+    }
+
+    .food-icons {
+      position: fixed;
+      top: 30px;
+      right: 30px;
+      display: flex;
+      gap: 12px;
+      z-index: 3;
+    }
+
+    .food-icon {
+      font-size: 28px;
+      opacity: 0.2;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        padding: 30px 16px 60px;
+      }
+      
+      .header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 20px;
+      }
+      
+      .main-title {
+        font-size: 2.2rem;
+      }
+      
+      .users-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+      
+      .role-select {
+        flex-direction: column;
+      }
+      
+      .update-btn {
+        width: 100%;
+        justify-content: center;
+      }
+      
+      .food-icons {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+      }
+    }
+
+    .role-customer {
+      color: #4CAF50;
+    }
+
+    .role-rider {
+      color: #2196F3;
+    }
+
+    .role-restaurant {
+      color: #FF9800;
+    }
+
+    .role-description {
+      margin-top: 10px;
+      font-size: 0.85rem;
+      color: #8D6E63;
+      line-height: 1.4;
+    }
+  </style>
+</head>
+<body>
+  <div class="food-bg"></div>
+  
+  <div class="food-icons">
+    <div class="food-icon">👑</div>
+    <div class="food-icon">🎭</div>
+    <div class="food-icon">⚙️</div>
+  </div>
+
+  <div class="container">
+    <div class="header">
+      <h1 class="main-title">
+        <i class="fas fa-user-tag"></i> Manage User Roles
+      </h1>
+      <a href="/" class="back-btn">
+        <i class="fas fa-arrow-left"></i> Back to Dashboard
+      </a>
+    </div>
+
+    <div class="users-grid">
+      <% users.forEach(u => { %>
+        <div class="user-card">
+          <div class="user-header">
+            <% 
+              let avatarIcon = 'fa-user';
+              if (u.role === 'customer') avatarIcon = 'fa-user';
+              else if (u.role === 'rider') avatarIcon = 'fa-motorcycle';
+              else if (u.role === 'restaurant') avatarIcon = 'fa-store';
+            %>
+            <div class="user-avatar">
+              <i class="fas <%= avatarIcon %>"></i>
+            </div>
+            <div class="user-info">
+              <div class="user-name"><%= u.name %></div>
+              <div class="user-username">
+                <i class="fas fa-at"></i> <%= u.username %>
+              </div>
+            </div>
+          </div>
+
+          <div class="current-role-section">
+            <div class="role-label">
+              <i class="fas fa-user-tag"></i> Current Role
+            </div>
+            <div class="current-role">
+              <i class="fas 
+                <%= u.role === 'customer' ? 'fa-user role-customer' : '' %>
+                <%= u.role === 'rider' ? 'fa-motorcycle role-rider' : '' %>
+                <%= u.role === 'restaurant' ? 'fa-store role-restaurant' : '' %>
+              "></i>
+              <%= u.role.charAt(0).toUpperCase() + u.role.slice(1) %>
+            </div>
+            <div class="role-description">
+              <% 
+                let roleDesc = '';
+                if (u.role === 'customer') roleDesc = 'Can browse restaurants, place orders, and track deliveries.';
+                else if (u.role === 'rider') roleDesc = 'Can accept and deliver food orders to customers.';
+                else if (u.role === 'restaurant') roleDesc = 'Can manage menu items and process food orders.';
+              %>
+              <%= roleDesc %>
+            </div>
+          </div>
+
+          <form action="/admin/users/manage/<%= u._id %>/" method="POST" class="role-form">
+            <div class="form-title">
+              <i class="fas fa-exchange-alt"></i> Update Role
+            </div>
+            <div class="role-select">
+              <select name="role">
+                <option value="customer" <%= u.role==='customer' ? 'selected' : '' %>>
+                  <i class="fas fa-user"></i> Customer
+                </option>
+                <option value="rider" <%= u.role==='rider' ? 'selected' : '' %>>
+                  <i class="fas fa-motorcycle"></i> Rider
+                </option>
+                <option value="restaurant" <%= u.role==='restaurant' ? 'selected' : '' %>>
+                  <i class="fas fa-store"></i> Restaurant
+                </option>
+              </select>
+              <button type="submit" class="update-btn" onclick="return confirm('Are you sure you want to update this user\'s role?')">
+                <i class="fas fa-sync-alt"></i> Update
+              </button>
+            </div>
+          </form>
+        </div>
+      <% }) %>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const cards = document.querySelectorAll('.user-card');
+      cards.forEach((card, index) => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(20px)';
+        
+        setTimeout(() => {
+          card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+          card.style.opacity = '1';
+          card.style.transform = 'translateY(0)';
+        }, 100 + index * 50);
+      });
+
+      const foodIcons = document.querySelectorAll('.food-icon');
+      foodIcons.forEach((icon, index) => {
+        setInterval(() => {
+          icon.style.transform = `translateY(${Math.sin(Date.now() / 1000 + index) * 5}px)`;
+        }, 100);
+      });
+
+      const roleForms = document.querySelectorAll('.role-form');
+      roleForms.forEach(form => {
+        form.addEventListener('submit', function(e) {
+          const roleSelect = this.querySelector('select[name="role"]');
+          const userName = this.closest('.user-card').querySelector('.user-name').textContent;
+          const newRole = roleSelect.options[roleSelect.selectedIndex].text.trim();
+          
+          if (!confirm(`Are you sure you want to change ${userName}'s role to ${newRole}?`)) {
+            e.preventDefault();
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>

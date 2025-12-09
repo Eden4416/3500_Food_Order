@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= restaurant.name %> Menu</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #FF9800, #FF5722);
+            --bg-gradient: linear-gradient(135deg, #fff8e1 0%, #fff3e0 100%);
+            --text-primary: #5D4037;
+            --text-secondary: #8D6E63;
+            --card-shadow: 0 10px 30px rgba(255, 152, 0, 0.15);
+            --card-shadow-hover: 0 20px 40px rgba(255, 152, 0, 0.25);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        body {
+            background: var(--bg-gradient);
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
+        
+        .food-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+            overflow: hidden;
+        }
+        
+        .food-icons {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            align-items: center;
+            opacity: 0.1;
+            font-size: 2rem;
+            color: #FF9800;
+            animation: floatIcons 20s infinite linear;
+        }
+        
+        @keyframes floatIcons {
+            0% { transform: translateY(0) rotate(0deg); }
+            100% { transform: translateY(-100px) rotate(360deg); }
+        }
+        
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 2rem;
+            background: white;
+            box-shadow: 0 4px 20px rgba(255, 152, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 700;
+            font-size: 1.5rem;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .logo i {
+            font-size: 2rem;
+        }
+        
+        .page-header {
+            text-align: center;
+            padding: 3rem 2rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 900;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .page-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background: var(--primary-gradient);
+            border-radius: 2px;
+        }
+        
+        .page-subtitle {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            font-weight: 400;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .menu-grid {
+            max-width: 1200px;
+            margin: 0 auto 3rem;
+            padding: 0 2rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        
+        .menu-card {
+            background: white;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+        }
+        
+        .menu-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--card-shadow-hover);
+        }
+        
+        .menu-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 6px;
+            background: var(--primary-gradient);
+            z-index: 1;
+        }
+        
+        .menu-item-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            background: linear-gradient(135deg, rgba(255, 152, 0, 0.1), rgba(255, 87, 34, 0.1));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #FF5722;
+            font-size: 3rem;
+            position: relative;
+        }
+        
+        .menu-item-image i {
+            z-index: 1;
+        }
+        
+        .menu-item-content {
+            padding: 1.5rem;
+        }
+        
+        .menu-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.75rem;
+        }
+        
+        .menu-item-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            flex: 1;
+        }
+        
+        .menu-item-price {
+            background: linear-gradient(135deg, rgba(255, 152, 0, 0.1), rgba(255, 87, 34, 0.1));
+            padding: 0.5rem 1rem;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: #FF5722;
+            min-width: 80px;
+            text-align: center;
+        }
+        
+        .menu-item-description {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            line-height: 1.5;
+            margin-bottom: 1.25rem;
+            min-height: 60px;
+        }
+        
+        .quantity-selector {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 1rem;
+            background: rgba(255, 152, 0, 0.05);
+            border-radius: 12px;
+            padding: 0.5rem;
+        }
+        
+        .quantity-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--primary-gradient);
+            color: white;
+            border: none;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+        
+        .quantity-btn:disabled {
+            background: rgba(141, 110, 99, 0.2);
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+        
+        .quantity-btn:not(:disabled):hover {
+            transform: scale(1.1);
+            box-shadow: 0 5px 10px rgba(255, 87, 34, 0.3);
+        }
+        
+        .quantity-display {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            min-width: 60px;
+            text-align: center;
+        }
+        
+        .add-to-cart-form {
+            margin-top: 1rem;
+        }
+        
+        .add-to-cart-btn {
+            width: 100%;
+            padding: 0.75rem;
+            background: var(--primary-gradient);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        
+        .add-to-cart-btn:disabled {
+            background: rgba(141, 110, 99, 0.2);
+            color: var(--text-secondary);
+            cursor: not-allowed;
+        }
+        
+        .add-to-cart-btn:not(:disabled):hover {
+            transform: scale(1.02);
+            box-shadow: 0 5px 15px rgba(255, 87, 34, 0.3);
+        }
+        
+        .add-to-cart-btn i {
+            font-size: 1.1rem;
+        }
+        
+        .action-buttons {
+            max-width: 1200px;
+            margin: 0 auto 3rem;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .action-btn {
+            padding: 0.75rem 1.5rem;
+            background: white;
+            border: 2px solid rgba(255, 152, 0, 0.2);
+            border-radius: 12px;
+            color: var(--text-secondary);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+        }
+        
+        .action-btn:hover {
+            background: var(--primary-gradient);
+            color: white;
+            border-color: transparent;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 152, 0, 0.2);
+        }
+        
+        .empty-menu {
+            text-align: center;
+            padding: 4rem 2rem;
+            grid-column: 1 / -1;
+            background: white;
+            border-radius: 24px;
+            box-shadow: var(--card-shadow);
+        }
+        
+        .empty-icon {
+            font-size: 4rem;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1.5rem;
+        }
+        
+        .empty-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+        
+        .empty-description {
+            color: var(--text-secondary);
+            max-width: 500px;
+            margin: 0 auto 2rem;
+        }
+        
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 1rem;
+            }
+            
+            .page-title {
+                font-size: 2rem;
+            }
+            
+            .menu-grid {
+                grid-template-columns: 1fr;
+                padding: 0 1rem;
+            }
+            
+            .action-buttons {
+                padding: 0 1rem;
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .action-btn {
+                width: 100%;
+                max-width: 300px;
+                justify-content: center;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .menu-item-header {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            
+            .menu-item-price {
+                align-self: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="food-bg">
+        <div class="food-icons">
+            <i class="fas fa-utensils"></i>
+            <i class="fas fa-hamburger"></i>
+            <i class="fas fa-pizza-slice"></i>
+            <i class="fas fa-ice-cream"></i>
+            <i class="fas fa-coffee"></i>
+            <i class="fas fa-bread-slice"></i>
+            <i class="fas fa-cheese"></i>
+            <i class="fas fa-lemon"></i>
+            <i class="fas fa-drumstick-bite"></i>
+            <i class="fas fa-fish"></i>
+        </div>
+    </div>
+    
+    <nav class="navbar">
+        <div class="logo">
+            <i class="fas fa-utensils"></i>
+        </div>
+    </nav>
+    
+    <header class="page-header">
+        <h1 class="page-title"><%= restaurant.name %> - Menu</h1>
+        <p class="page-subtitle">Browse our delicious selection of dishes and add your favorites to the cart</p>
+    </header>
+    
+    <div class="menu-grid">
+        <% if (menuItems && menuItems.length > 0) { %>
+            <% menuItems.forEach(item => { %>
+            <div class="menu-card">
+                <div class="menu-item-image">
+                    <% 
+                    // 根据食物类型选择图标
+                    let foodIcon = 'fa-utensils';
+                    const itemName = item.name.toLowerCase();
+                    
+                    if (itemName.includes('pizza')) foodIcon = 'fa-pizza-slice';
+                    else if (itemName.includes('burger')) foodIcon = 'fa-hamburger';
+                    else if (itemName.includes('sushi')) foodIcon = 'fa-fish';
+                    else if (itemName.includes('pasta') || itemName.includes('spaghetti')) foodIcon = 'fa-pasta';
+                    else if (itemName.includes('salad')) foodIcon = 'fa-leaf';
+                    else if (itemName.includes('ice cream') || itemName.includes('dessert')) foodIcon = 'fa-ice-cream';
+                    else if (itemName.includes('coffee') || itemName.includes('tea')) foodIcon = 'fa-coffee';
+                    else if (itemName.includes('chicken')) foodIcon = 'fa-drumstick-bite';
+                    else if (itemName.includes('bread') || itemName.includes('sandwich')) foodIcon = 'fa-bread-slice';
+                    else if (itemName.includes('cake')) foodIcon = 'fa-birthday-cake';
+                    else if (itemName.includes('soup')) foodIcon = 'fa-bowl-food';
+                    else if (itemName.includes('drink') || itemName.includes('beverage')) foodIcon = 'fa-glass-water';
+                    %>
+                    <i class="fas <%= foodIcon %>"></i>
+                </div>
+                
+                <div class="menu-item-content">
+                    <div class="menu-item-header">
+                        <h3 class="menu-item-name"><%= item.name %></h3>
+                        <div class="menu-item-price">$<%= item.price %></div>
+                    </div>
+                    
+                    <p class="menu-item-description">
+                        A delicious <%= item.name %> prepared with fresh ingredients and authentic flavors.
+                    </p>
+                    
+                    <div class="quantity-selector" data-item-id="<%= item._id %>">
+                        <button type="button" class="quantity-btn minus-btn" disabled>
+                            <i class="fas fa-minus"></i>
+                        </button>
+                        <span class="quantity-display" id="quantity-<%= item._id %>">0</span>
+                        <button type="button" class="quantity-btn plus-btn">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+                    
+                    <form class="add-to-cart-form" action="/cart/add" method="POST">
+                        <input type="hidden" name="restaurantId" value="<%= restaurant._id %>">
+                        <input type="hidden" name="itemId" value="<%= item._id %>">
+                        <input type="hidden" name="name" value="<%= item.name %>">
+                        <input type="hidden" name="price" value="<%= item.price %>">
+                        <input type="hidden" name="quantity" id="hidden-quantity-<%= item._id %>" value="0">
+                        <input type="hidden" name="returnUrl" value="/restaurants/<%= restaurant._id %>">
+                        <button type="submit" class="add-to-cart-btn" id="add-to-cart-<%= item._id %>" disabled>
+                            <i class="fas fa-cart-plus"></i>
+                            Add to Cart
+                        </button>
+                    </form>
+                </div>
+            </div>
+            <% }) %>
+        <% } else { %>
+            <div class="empty-menu">
+                <div class="empty-icon">
+                    <i class="fas fa-utensils"></i>
+                </div>
+                <h2 class="empty-title">Menu Empty</h2>
+                <p class="empty-description">This restaurant doesn't have any menu items available at the moment. Please check back later.</p>
+            </div>
+        <% } %>
+    </div>
+    
+    <div class="action-buttons">
+        <a href="/cart" class="action-btn">
+            <i class="fas fa-shopping-cart"></i>
+            View Cart
+        </a>
+        <a href="/orders" class="action-btn">
+            <i class="fas fa-clipboard-list"></i>
+            View Orders
+        </a>
+        <a href="/restaurants" class="action-btn">
+            <i class="fas fa-arrow-left"></i>
+            Back to Restaurants
+        </a>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const quantitySelectors = document.querySelectorAll('.quantity-selector');
+            
+            quantitySelectors.forEach(selector => {
+                const itemId = selector.getAttribute('data-item-id');
+                const minusBtn = selector.querySelector('.minus-btn');
+                const plusBtn = selector.querySelector('.plus-btn');
+                const quantityDisplay = selector.querySelector('.quantity-display');
+                const hiddenQuantityInput = document.getElementById(`hidden-quantity-${itemId}`);
+                const addToCartBtn = document.getElementById(`add-to-cart-${itemId}`);
+                
+                minusBtn.addEventListener('click', function() {
+                    let currentQuantity = parseInt(quantityDisplay.textContent);
+                    if (currentQuantity > 0) {
+                        currentQuantity--;
+                        quantityDisplay.textContent = currentQuantity;
+                        hiddenQuantityInput.value = currentQuantity;
+                        
+                        if (currentQuantity === 0) {
+                            minusBtn.disabled = true;
+                            addToCartBtn.disabled = true;
+                        } else {
+                            minusBtn.disabled = false;
+                            addToCartBtn.disabled = false;
+                        }
+                    }
+                });
+                
+                plusBtn.addEventListener('click', function() {
+                    let currentQuantity = parseInt(quantityDisplay.textContent);
+                    currentQuantity++;
+                    quantityDisplay.textContent = currentQuantity;
+                    hiddenQuantityInput.value = currentQuantity;
+                    
+                    minusBtn.disabled = false;
+                    addToCartBtn.disabled = false;
+                });
+                
+                addToCartBtn.addEventListener('click', function(e) {
+                    const quantity = parseInt(quantityDisplay.textContent);
+                    if (quantity === 0) {
+                        e.preventDefault();
+                        alert('Please select at least 1 item');
+                        return false;
+                    }
+                    
+                    const itemName = document.querySelector(`[name="name"][value*="${itemId}"]`).value;
+                    setTimeout(() => {
+                        alert(`Added ${quantity} ${itemName}(s) to cart!`);
+                    }, 100);
+                });
+            });
+        });
+    </script>
+</body>
+</html>

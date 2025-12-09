@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delivered Orders - Rider Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #FF9800, #FF5722);
+            --bg-gradient: linear-gradient(135deg, #fff8e1 0%, #fff3e0 100%);
+            --text-primary: #5D4037;
+            --text-secondary: #8D6E63;
+            --card-shadow: 0 10px 30px rgba(255, 152, 0, 0.15);
+            --card-shadow-hover: 0 20px 40px rgba(255, 152, 0, 0.25);
+            --status-delivered: #4CAF50;
+            --status-pending: #FF9800;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        body {
+            background: var(--bg-gradient);
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
+        
+        .food-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+            overflow: hidden;
+        }
+        
+        .food-icons {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            align-items: center;
+            opacity: 0.1;
+            font-size: 2rem;
+            color: #FF9800;
+            animation: floatIcons 20s infinite linear;
+        }
+        
+        @keyframes floatIcons {
+            0% { transform: translateY(0) rotate(0deg); }
+            100% { transform: translateY(-100px) rotate(360deg); }
+        }
+        
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 2rem;
+            background: white;
+            box-shadow: 0 4px 20px rgba(255, 152, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 700;
+            font-size: 1.5rem;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .logo i {
+            font-size: 2rem;
+        }
+        
+        .back-btn-top {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            background: linear-gradient(135deg, rgba(255, 152, 0, 0.1), rgba(255, 87, 34, 0.1));
+            color: #FF5722;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+        }
+        
+        .back-btn-top:hover {
+            background: var(--primary-gradient);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 87, 34, 0.3);
+        }
+        
+        .page-header {
+            text-align: center;
+            padding: 3rem 2rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 900;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .page-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background: var(--primary-gradient);
+            border-radius: 2px;
+        }
+        
+        .page-subtitle {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            font-weight: 400;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .orders-container {
+            max-width: 1200px;
+            margin: 0 auto 3rem;
+            padding: 0 2rem;
+        }
+        
+        .order-card {
+            background: white;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 1.5rem;
+            position: relative;
+            transition: all 0.3s;
+        }
+        
+        .order-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 6px;
+            background: var(--primary-gradient);
+        }
+        
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(141, 110, 99, 0.1);
+        }
+        
+        .order-restaurant {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+        
+        .order-status-badge {
+            padding: 0.5rem 1.25rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        
+        .status-delivered {
+            background: rgba(76, 175, 80, 0.1);
+            color: var(--status-delivered);
+        }
+        
+        .status-pending {
+            background: rgba(255, 152, 0, 0.1);
+            color: var(--status-pending);
+        }
+        
+        .order-body {
+            padding: 1.5rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .order-section {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+        
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid rgba(141, 110, 99, 0.1);
+        }
+        
+        .section-title i {
+            color: #FF9800;
+        }
+        
+        .customer-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .info-label {
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+        
+        .info-value {
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+        
+        .order-items {
+            grid-column: 1 / -1;
+        }
+        
+        .items-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .item-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem;
+            background: rgba(255, 152, 0, 0.05);
+            border-radius: 12px;
+        }
+        
+        .item-name {
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+        
+        .item-qty {
+            background: rgba(255, 152, 0, 0.1);
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-weight: 600;
+            color: #FF5722;
+        }
+        
+        .item-price {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .order-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem;
+            border-top: 1px solid rgba(141, 110, 99, 0.1);
+            background: rgba(255, 152, 0, 0.02);
+        }
+        
+        .order-total {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .delivery-actions {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .delivered-btn {
+            padding: 0.75rem 1.5rem;
+            background: var(--primary-gradient);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .delivered-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(255, 87, 34, 0.3);
+        }
+        
+        .success-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--status-delivered);
+            font-weight: 600;
+            padding: 0.75rem 1.5rem;
+            background: rgba(76, 175, 80, 0.1);
+            border-radius: 12px;
+        }
+        
+        .success-badge i {
+            font-size: 1.2rem;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            background: white;
+            border-radius: 24px;
+            box-shadow: var(--card-shadow);
+        }
+        
+        .empty-icon {
+            font-size: 4rem;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1.5rem;
+        }
+        
+        .empty-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+        
+        .empty-description {
+            color: var(--text-secondary);
+            max-width: 500px;
+            margin: 0 auto 2rem;
+        }
+        
+        .floating-back-btn {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 1000;
+            padding: 1rem 1.5rem;
+            background: var(--primary-gradient);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 0 5px 20px rgba(255, 152, 0, 0.3);
+            text-decoration: none;
+        }
+        
+        .floating-back-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(255, 152, 0, 0.4);
+        }
+        
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 1rem;
+            }
+            
+            .page-title {
+                font-size: 2rem;
+            }
+            
+            .orders-container {
+                padding: 0 1rem;
+            }
+            
+            .order-body {
+                grid-template-columns: 1fr;
+            }
+            
+            .order-footer {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .delivery-actions {
+                width: 100%;
+                justify-content: flex-start;
+            }
+            
+            .floating-back-btn {
+                bottom: 1rem;
+                right: 1rem;
+                padding: 0.75rem 1.25rem;
+                font-size: 0.9rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .order-header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .delivery-actions {
+                flex-direction: column;
+            }
+            
+            .delivered-btn, .success-badge {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .navbar {
+                flex-direction: column;
+                gap: 1rem;
+                padding: 1rem;
+            }
+            
+            .logo {
+                font-size: 1.3rem;
+            }
+            
+            .back-btn-top {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="food-bg">
+        <div class="food-icons">
+            <i class="fas fa-motorcycle"></i>
+            <i class="fas fa-shipping-fast"></i>
+            <i class="fas fa-check-circle"></i>
+            <i class="fas fa-utensils"></i>
+            <i class="fas fa-hamburger"></i>
+            <i class="fas fa-pizza-slice"></i>
+            <i class="fas fa-ice-cream"></i>
+            <i class="fas fa-coffee"></i>
+            <i class="fas fa-clock"></i>
+            <i class="fas fa-map-marker-alt"></i>
+        </div>
+    </div>
+
+    <nav class="navbar">
+        <div class="logo">
+            <i class="fas fa-motorcycle"></i>
+            <span>Rider Dashboard</span>
+        </div>
+        <a href="/" class="back-btn-top">
+            <i class="fas fa-arrow-left"></i>
+            Back to Dashboard
+        </a>
+    </nav>
+    
+    <header class="page-header">
+        <h1 class="page-title">Delivered Orders</h1>
+        <p class="page-subtitle">View your completed deliveries and track your delivery history</p>
+    </header>
+    
+    <div class="orders-container">
+        <% if (orders.length === 0) { %>
+            <div class="empty-state">
+                <div class="empty-icon">
+                    <i class="fas fa-clipboard-check"></i>
+                </div>
+                <h2 class="empty-title">No Delivered Orders</h2>
+                <p class="empty-description">You haven't delivered any orders yet. Completed deliveries will appear here.</p>
+            </div>
+        <% } else { %>
+            <% orders.forEach(o => { %>
+            <div class="order-card">
+                <div class="order-header">
+                    <div class="order-restaurant">
+                        <i class="fas fa-store" style="color: #FF9800; margin-right: 0.5rem;"></i>
+                        <%= o.restaurant.name %>
+                    </div>
+                    <div class="order-status-badge status-<%= o.status.toLowerCase() %>">
+                        <%= o.status %>
+                    </div>
+                </div>
+                
+                <div class="order-body">
+                    <div class="order-section">
+                        <div class="section-title">
+                            <i class="fas fa-user"></i>
+                            <span>Customer Information</span>
+                        </div>
+                        <div class="customer-info">
+                            <div class="info-item">
+                                <span class="info-label">Name:</span>
+                                <span class="info-value"><%= o.customer.name %></span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Phone:</span>
+                                <span class="info-value"><%= o.customer.phone || 'N/A' %></span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Address:</span>
+                                <span class="info-value"><%= o.customer.address || 'N/A' %></span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="order-section order-items">
+                        <div class="section-title">
+                            <i class="fas fa-clipboard-list"></i>
+                            <span>Order Items</span>
+                        </div>
+                        <div class="items-list">
+                            <% o.items.forEach(i => { %>
+                            <div class="item-row">
+                                <span class="item-name"><%= i.name %></span>
+                                <span class="item-qty">x <%= i.qty %></span>
+                                <span class="item-price">$<%= i.price %></span>
+                            </div>
+                            <% }) %>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="order-footer">
+                    <div class="order-total">Total: $<%= o.totalPrice %></div>
+                    <div class="delivery-actions">
+                        <% if (o.status === 'PickedUp') { %>
+                        <form action="/rider/delivered/<%= o._id %>" method="POST" style="display: inline;">
+                            <button type="submit" class="delivered-btn">
+                                <i class="fas fa-check-circle"></i>
+                                Mark as Delivered
+                            </button>
+                        </form>
+                        <% } %>
+                        <% if (o.status === 'Delivered') { %>
+                        <div class="success-badge">
+                            <i class="fas fa-check-circle"></i>
+                            <span>Successful Delivery</span>
+                        </div>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+            <% }) %>
+        <% } %>
+    </div>
+    
+    <a href="/" class="floating-back-btn">
+        <i class="fas fa-arrow-left"></i>
+        Dashboard
+    </a>
+</body>
+</html>

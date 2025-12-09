@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Food Order | Paid Orders History</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .food-bg {
+            background: linear-gradient(135deg, #fff8e1 0%, #fff3e0 100%);
+            min-height: 100vh;
+            position: relative;
+        }
+        
+        .food-icons {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            top: 0;
+            left: 0;
+            overflow: hidden;
+        }
+        
+        .food-icons i {
+            position: absolute;
+            font-size: 2rem;
+            color: rgba(255, 87, 34, 0.1);
+            animation: float 20s infinite linear;
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0) rotate(0deg); }
+            100% { transform: translateY(-1000px) rotate(360deg); }
+        }
+        
+        .card {
+            background: white;
+            border-radius: 24px;
+            box-shadow: 
+                0 10px 25px rgba(255, 152, 0, 0.1),
+                0 5px 15px rgba(255, 152, 0, 0.05);
+            overflow: hidden;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 
+                0 15px 35px rgba(255, 152, 0, 0.15),
+                0 10px 20px rgba(255, 152, 0, 0.1);
+        }
+        
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(to right, #FF9800, #FF5722);
+        }
+        
+        .gradient-text {
+            background: linear-gradient(to right, #FF9800, #FF5722);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(to right, #FF9800, #FF5722);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 152, 0, 0.2);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 152, 0, 0.3);
+        }
+        
+        .btn-secondary {
+            background: white;
+            color: #5D4037;
+            border: 2px solid #FF9800;
+            padding: 10px 20px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-secondary:hover {
+            background: #fff8e1;
+            transform: translateY(-2px);
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+        
+        .status-paid {
+            background: linear-gradient(to right, #C8E6C9, #A5D6A7);
+            color: #1B5E20;
+        }
+        
+        .status-delivered {
+            background: linear-gradient(to right, #BBDEFB, #90CAF9);
+            color: #0D47A1;
+        }
+        
+        .price-tag {
+            background: linear-gradient(to right, #FFE0B2, #FFCC80);
+            color: #5D4037;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+        
+        .order-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px;
+            border-bottom: 1px dashed #E0E0E0;
+        }
+        
+        .order-item:last-child {
+            border-bottom: none;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 60px 40px;
+            color: #8D6E63;
+        }
+        
+        .rider-info {
+            background: linear-gradient(135deg, #E3F2FD, #BBDEFB);
+            border-radius: 12px;
+            padding: 16px;
+            margin-top: 16px;
+            border-left: 4px solid #2196F3;
+        }
+        
+        <%
+            const icons = ['fa-check-circle', 'fa-receipt', 'fa-history', 'fa-clipboard-check', 'fa-file-invoice-dollar', 'fa-wallet', 'fa-credit-card', 'fa-sack-dollar'];
+        %>
+        
+        <% for(let i = 0; i < 15; i++) { %>
+            .food-icons i:nth-child(<%= i + 1 %>) {
+                left: <%= Math.random() * 100 %>%;
+                top: <%= Math.random() * 100 %>%;
+                animation-delay: <%= Math.random() * 20 %>s;
+                font-size: <%= Math.random() * 2 + 1.5 %>rem;
+            }
+        <% } %>
+    </style>
+</head>
+<body class="food-bg">
+    <div class="food-icons">
+        <% for(let i = 0; i < 15; i++) { %>
+            <i class="fas <%= icons[Math.floor(Math.random() * icons.length)] %>"></i>
+        <% } %>
+    </div>
+    
+    <div class="container mx-auto px-4 py-8 relative z-10">
+        <div class="flex items-center justify-between mb-8">
+            <div>
+                <h1 class="text-4xl font-bold gradient-text">Paid Orders History</h1>
+                <p class="text-[#8D6E63] mt-2">View your completed and paid orders</p>
+            </div>
+            <a href="/" class="btn-secondary inline-flex items-center">
+                <i class="fas fa-arrow-left mr-2"></i> Back to Home
+            </a>
+        </div>
+        
+        <% if (orders.length === 0) { %>
+            <div class="card max-w-2xl mx-auto">
+                <div class="empty-state">
+                    <div class="w-24 h-24 bg-gradient-to-br from-[#C8E6C9] to-[#A5D6A7] rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i class="fas fa-receipt text-4xl text-[#2E7D32]"></i>
+                    </div>
+                    <h2 class="text-2xl font-bold text-[#5D4037] mb-4">No Paid Orders Yet</h2>
+                    <p class="text-[#8D6E63] mb-8">You haven't completed any paid orders. Start ordering from our restaurants!</p>
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                        <a href="/restaurants" class="btn-primary inline-flex items-center">
+                            <i class="fas fa-store mr-2"></i> Browse Restaurants
+                        </a>
+                        <a href="/orders" class="btn-secondary inline-flex items-center">
+                            <i class="fas fa-clock mr-2"></i> View Pending Orders
+                        </a>
+                    </div>
+                </div>
+            </div>
+        <% } else { %>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <% orders.forEach(order => { %>
+                    <div class="card">
+                        <div class="p-6">
+                            <div class="flex items-start justify-between mb-6">
+                                <div>
+                                    <div class="flex items-center mb-2">
+                                        <div class="w-10 h-10 bg-gradient-to-br from-[#4CAF50] to-[#2E7D32] rounded-lg flex items-center justify-center mr-3">
+                                            <i class="fas fa-store text-white"></i>
+                                        </div>
+                                        <div>
+                                            <h3 class="font-bold text-xl text-[#5D4037]"><%= order.restaurant.name %></h3>
+                                            <p class="text-[#8D6E63] text-sm">Order #<%= order._id.toString().substring(18, 24) %></p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="text-right">
+                                    <div class="status-badge status-paid mb-2">
+                                        <i class="fas fa-check-circle text-xs mr-1"></i> <%= order.status %>
+                                    </div>
+                                    <div class="price-tag">$<%= order.totalPrice %></div>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-gray-50 rounded-xl p-4 mb-4">
+                                <h4 class="font-bold text-[#5D4037] mb-3">
+                                    <i class="fas fa-list-ul mr-2"></i> Order Items
+                                </h4>
+                                
+                                <div class="space-y-2">
+                                    <% order.items.forEach(i => { %>
+                                        <div class="order-item">
+                                            <div class="flex items-center">
+                                                <div class="w-8 h-8 bg-gradient-to-br from-[#C8E6C9] to-[#A5D6A7] rounded-lg flex items-center justify-center mr-3">
+                                                    <i class="fas fa-utensil-spoon text-xs text-[#2E7D32]"></i>
+                                                </div>
+                                                <span class="font-medium text-[#5D4037]"><%= i.name %></span>
+                                            </div>
+                                            <div class="text-right">
+                                                <p class="font-bold text-[#5D4037]">$<%= (i.price * i.qty).toFixed(2) %></p>
+                                                <p class="text-sm text-[#8D6E63]">$<%= i.price %> × <%= i.qty %></p>
+                                            </div>
+                                        </div>
+                                    <% }) %>
+                                </div>
+                            </div>
+                            
+                            <div class="rider-info">
+                                <h4 class="font-bold text-[#0D47A1] mb-2">
+                                    <i class="fas fa-motorcycle mr-2"></i> Delivery Information
+                                </h4>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <p class="text-sm text-[#8D6E63]">Rider Name</p>
+                                        <p class="font-bold text-[#5D4037]">
+                                            <%= order.rider ? order.rider.name : 'Not Assigned' %>
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm text-[#8D6E63]">Rider Phone</p>
+                                        <p class="font-bold text-[#5D4037]">
+                                            <%= order.rider ? order.rider.phone : 'N/A' %>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <% }) %>
+            </div>
+            
+            <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-gradient-to-r from-[#FFF3E0] to-[#FFECB3] rounded-xl p-6 border border-[#FFE0B2]">
+                    <div class="flex items-center">
+                        <div class="w-12 h-12 bg-white rounded-lg flex items-center justify-center mr-4 shadow-sm">
+                            <i class="fas fa-receipt text-[#4CAF50] text-xl"></i>
+                        </div>
+                        <div>
+                            <p class="text-[#8D6E63] text-sm">Total Paid Orders</p>
+                            <p class="text-2xl font-bold text-[#5D4037]"><%= orders.length %></p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-gradient-to-r from-[#FFF3E0] to-[#FFECB3] rounded-xl p-6 border border-[#FFE0B2]">
+                    <div class="flex items-center">
+                        <div class="w-12 h-12 bg-white rounded-lg flex items-center justify-center mr-4 shadow-sm">
+                            <i class="fas fa-dollar-sign text-[#FF9800] text-xl"></i>
+                        </div>
+                        <div>
+                            <p class="text-[#8D6E63] text-sm">Total Spent</p>
+                            <p class="text-2xl font-bold text-[#5D4037]">
+                                $<%= orders.reduce((sum, order) => sum + parseFloat(order.totalPrice), 0).toFixed(2) %>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-gradient-to-r from-[#FFF3E0] to-[#FFECB3] rounded-xl p-6 border border-[#FFE0B2]">
+                    <div class="flex items-center">
+                        <div class="w-12 h-12 bg-white rounded-lg flex items-center justify-center mr-4 shadow-sm">
+                            <i class="fas fa-truck text-[#2196F3] text-xl"></i>
+                        </div>
+                        <div>
+                            <p class="text-[#8D6E63] text-sm">Delivered Orders</p>
+                            <p class="text-2xl font-bold text-[#5D4037]">
+                                <%= orders.filter(o => o.status.toLowerCase().includes('deliver')).length %>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <% } %>
+        
+        <div class="mt-8 flex flex-wrap gap-4">
+            <a href="/orders" class="btn-primary inline-flex items-center">
+                <i class="fas fa-clock mr-2"></i> View Pending Orders
+            </a>
+            <a href="/restaurants" class="btn-secondary inline-flex items-center">
+                <i class="fas fa-store mr-2"></i> Browse Restaurants
+            </a>
+            <a href="/" class="btn-secondary inline-flex items-center">
+                <i class="fas fa-home mr-2"></i> Back to Home
+            </a>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.card');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                
+                setTimeout(() => {
+                    card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+        });
+    </script>
+</body>
+</html>

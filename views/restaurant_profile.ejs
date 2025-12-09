@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restaurant Profile</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #FF9800, #FF5722);
+            --bg-gradient: linear-gradient(135deg, #fff8e1 0%, #fff3e0 100%);
+            --text-primary: #5D4037;
+            --text-secondary: #8D6E63;
+            --card-shadow: 0 10px 30px rgba(255, 152, 0, 0.15);
+            --card-shadow-hover: 0 20px 40px rgba(255, 152, 0, 0.25);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        body {
+            background: var(--bg-gradient);
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
+        
+        .food-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+            overflow: hidden;
+        }
+        
+        .food-icons {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            align-items: center;
+            opacity: 0.1;
+            font-size: 2rem;
+            color: #FF9800;
+            animation: floatIcons 20s infinite linear;
+        }
+        
+        @keyframes floatIcons {
+            0% { transform: translateY(0) rotate(0deg); }
+            100% { transform: translateY(-100px) rotate(360deg); }
+        }
+        
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 2rem;
+            background: white;
+            box-shadow: 0 4px 20px rgba(255, 152, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 700;
+            font-size: 1.5rem;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .logo i {
+            font-size: 2rem;
+        }
+        
+        .page-header {
+            text-align: center;
+            padding: 3rem 2rem 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 900;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .page-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background: var(--primary-gradient);
+            border-radius: 2px;
+        }
+        
+        .page-subtitle {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            font-weight: 400;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .profile-container {
+            max-width: 800px;
+            margin: 0 auto 3rem;
+            padding: 0 2rem;
+        }
+        
+        .profile-card {
+            background: white;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            position: relative;
+        }
+        
+        .profile-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 8px;
+            background: var(--primary-gradient);
+        }
+        
+        .profile-header {
+            padding: 2rem 2rem 1.5rem;
+            border-bottom: 1px solid rgba(141, 110, 99, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+        
+        .profile-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(255, 152, 0, 0.1), rgba(255, 87, 34, 0.1));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            color: #FF5722;
+        }
+        
+        .profile-title {
+            flex: 1;
+        }
+        
+        .profile-title h2 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+        
+        .profile-title p {
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+        
+        .profile-form {
+            padding: 2rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 1rem;
+        }
+        
+        .input-with-icon {
+            position: relative;
+        }
+        
+        .input-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #FF9800;
+            font-size: 1.1rem;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 0.875rem 1rem 0.875rem 3rem;
+            border: 2px solid rgba(255, 152, 0, 0.2);
+            border-radius: 12px;
+            font-size: 1rem;
+            color: var(--text-primary);
+            background: white;
+            transition: all 0.3s;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: #FF9800;
+            box-shadow: 0 0 0 3px rgba(255, 152, 0, 0.1);
+        }
+        
+        .form-input:hover {
+            border-color: rgba(255, 152, 0, 0.4);
+        }
+        
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(141, 110, 99, 0.1);
+        }
+        
+        .save-btn {
+            flex: 1;
+            padding: 0.875rem;
+            background: var(--primary-gradient);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        
+        .save-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 87, 34, 0.3);
+        }
+        
+        .save-btn i {
+            font-size: 1.1rem;
+        }
+        
+        .back-btn {
+            padding: 0.875rem 1.5rem;
+            background: white;
+            border: 2px solid rgba(255, 152, 0, 0.2);
+            border-radius: 12px;
+            color: var(--text-secondary);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+        }
+        
+        .back-btn:hover {
+            background: var(--primary-gradient);
+            color: white;
+            border-color: transparent;
+        }
+        
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 1rem;
+            }
+            
+            .page-title {
+                font-size: 2rem;
+            }
+            
+            .profile-container {
+                padding: 0 1rem;
+            }
+            
+            .profile-header {
+                flex-direction: column;
+                text-align: center;
+                gap: 1rem;
+            }
+            
+            .profile-form {
+                padding: 1.5rem;
+            }
+            
+            .form-actions {
+                flex-direction: column;
+            }
+            
+            .save-btn, .back-btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .form-input {
+                padding-left: 2.5rem;
+            }
+            
+            .input-icon {
+                left: 0.75rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="food-bg">
+        <div class="food-icons">
+            <i class="fas fa-utensils"></i>
+            <i class="fas fa-hamburger"></i>
+            <i class="fas fa-pizza-slice"></i>
+            <i class="fas fa-ice-cream"></i>
+            <i class="fas fa-coffee"></i>
+            <i class="fas fa-bread-slice"></i>
+            <i class="fas fa-cheese"></i>
+            <i class="fas fa-lemon"></i>
+            <i class="fas fa-drumstick-bite"></i>
+            <i class="fas fa-fish"></i>
+        </div>
+    </div>
+    
+    <nav class="navbar">
+        <div class="logo">
+            <i class="fas fa-utensils"></i>
+        </div>
+    </nav>
+    
+    <header class="page-header">
+        <h1 class="page-title">Restaurant Profile</h1>
+        <p class="page-subtitle">Update your restaurant details to keep your information current for customers</p>
+    </header>
+    
+    <div class="profile-container">
+        <div class="profile-card">
+            <div class="profile-header">
+                <div class="profile-icon">
+                    <i class="fas fa-store"></i>
+                </div>
+                <div class="profile-title">
+                    <h2>Restaurant Information</h2>
+                    <p>Update your restaurant details below</p>
+                </div>
+            </div>
+            
+            <form class="profile-form" action="/restaurant/profile" method="POST">
+                <div class="form-group">
+                    <label class="form-label">Restaurant Name</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-store input-icon"></i>
+                        <input type="text" class="form-input" name="name" value="<%= restaurant.name %>" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Phone Number</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-phone input-icon"></i>
+                        <input type="tel" class="form-input" name="phone" value="<%= restaurant.phone %>" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Address</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-map-marker-alt input-icon"></i>
+                        <input type="text" class="form-input" name="address" value="<%= restaurant.address %>" required>
+                    </div>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="submit" class="save-btn">
+                        <i class="fas fa-save"></i>
+                        Save Changes
+                    </button>
+                    <a href="/" class="back-btn">
+                        <i class="fas fa-arrow-left"></i>
+                        Back to Dashboard
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

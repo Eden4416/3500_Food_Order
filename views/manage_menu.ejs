@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Food Order | Menu Management</title>
+ 
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .food-bg {
+            background: linear-gradient(135deg, #fff8e1 0%, #fff3e0 100%);
+            min-height: 100vh;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .food-icons {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .food-icons i {
+            position: absolute;
+            font-size: 2rem;
+            color: rgba(255, 87, 34, 0.1);
+            animation: float 20s infinite linear;
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0) rotate(0deg); }
+            100% { transform: translateY(-1000px) rotate(360deg); }
+        }
+        
+        .card {
+            background: white;
+            border-radius: 24px;
+            box-shadow: 
+                0 10px 25px rgba(255, 152, 0, 0.1),
+                0 5px 15px rgba(255, 152, 0, 0.05);
+            overflow: hidden;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 
+                0 15px 35px rgba(255, 152, 0, 0.15),
+                0 10px 20px rgba(255, 152, 0, 0.1);
+        }
+        
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(to right, #FF9800, #FF5722);
+        }
+        
+        .gradient-text {
+            background: linear-gradient(to right, #FF9800, #FF5722);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(to right, #FF9800, #FF5722);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 152, 0, 0.2);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 152, 0, 0.3);
+        }
+        
+        .btn-secondary {
+            background: white;
+            color: #5D4037;
+            border: 2px solid #FF9800;
+            padding: 10px 20px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-secondary:hover {
+            background: #fff8e1;
+            transform: translateY(-2px);
+        }
+        
+        .btn-danger {
+            background: linear-gradient(to right, #ff4444, #cc0000);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.875rem;
+        }
+        
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 68, 68, 0.3);
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #FFE0B2;
+            border-radius: 12px;
+            font-size: 1rem;
+            color: #5D4037;
+            background-color: white;
+            transition: all 0.3s ease;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: #FF9800;
+            box-shadow: 0 0 0 3px rgba(255, 152, 0, 0.1);
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #5D4037;
+        }
+        
+        .menu-item-card {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px;
+            border-bottom: 1px solid #f0f0f0;
+            transition: background-color 0.3s ease;
+        }
+        
+        .menu-item-card:hover {
+            background-color: #fffaf0;
+        }
+        
+        .menu-item-card:last-child {
+            border-bottom: none;
+        }
+        
+        .price-tag {
+            background: linear-gradient(to right, #FFE0B2, #FFCC80);
+            color: #5D4037;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+        
+        .divider {
+            height: 2px;
+            background: linear-gradient(to right, transparent, #FFE0B2, transparent);
+            margin: 40px 0;
+        }
+        
+        <%
+            const icons = ['fa-utensils', 'fa-burger', 'fa-pizza-slice', 'fa-drumstick-bite', 'fa-fish', 'fa-carrot', 'fa-ice-cream', 'fa-mug-hot'];
+        %>
+        
+        <% for(let i = 0; i < 15; i++) { %>
+            .food-icons i:nth-child(<%= i + 1 %>) {
+                left: <%= Math.random() * 100 %>%;
+                top: <%= Math.random() * 100 %>%;
+                animation-delay: <%= Math.random() * 20 %>s;
+                font-size: <%= Math.random() * 2 + 1.5 %>rem;
+            }
+        <% } %>
+    </style>
+</head>
+<body class="food-bg">
+    <div class="food-icons">
+        <% for(let i = 0; i < 15; i++) { %>
+            <i class="fas <%= icons[Math.floor(Math.random() * icons.length)] %>"></i>
+        <% } %>
+    </div>
+    
+    <div class="container mx-auto px-4 py-8 relative z-10">
+        <div class="flex items-center justify-between mb-8">
+            <div>
+                <h1 class="text-4xl font-bold gradient-text">Menu Management</h1>
+                <div class="flex items-center mt-2">
+                    <i class="fas fa-store text-[#8D6E63] mr-2"></i>
+                    <p class="text-[#8D6E63]">Restaurant: <span class="font-semibold text-[#5D4037]"><%= rest.name %></span></p>
+                </div>
+            </div>
+            <a href="/" class="btn-secondary inline-flex items-center">
+                <i class="fas fa-arrow-left mr-2"></i> Back to Home
+            </a>
+        </div>
+        
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div class="card">
+                <div class="p-6">
+                    <div class="flex items-center mb-6">
+                        <div class="w-12 h-12 bg-gradient-to-br from-[#FF9800] to-[#FF5722] rounded-xl flex items-center justify-center mr-4">
+                            <i class="fas fa-plus text-white text-xl"></i>
+                        </div>
+                        <h2 class="text-2xl font-bold text-[#5D4037]">Add New Menu Item</h2>
+                    </div>
+                    
+                    <form action="/restaurant/menu/add" method="POST" class="space-y-6">
+                        <div>
+                            <label class="form-label">
+                                <i class="fas fa-utensils mr-2"></i> Item Name
+                            </label>
+                            <input 
+                                type="text" 
+                                name="name" 
+                                placeholder="e.g., Margherita Pizza" 
+                                required 
+                                class="form-input"
+                            >
+                        </div>
+                        
+                        <div>
+                            <label class="form-label">
+                                <i class="fas fa-align-left mr-2"></i> Description
+                            </label>
+                            <textarea 
+                                name="description" 
+                                placeholder="Describe the item, ingredients, etc." 
+                                rows="3"
+                                class="form-input"
+                            ></textarea>
+                        </div>
+                        
+                        <div>
+                            <label class="form-label">
+                                <i class="fas fa-tag mr-2"></i> Price
+                            </label>
+                            <div class="relative">
+                                <span class="absolute left-4 top-1/2 transform -translate-y-1/2 text-[#FF9800] font-bold">$</span>
+                                <input 
+                                    type="number" 
+                                    name="price" 
+                                    placeholder="0.00" 
+                                    step="0.01"
+                                    min="0"
+                                    required 
+                                    class="form-input pl-10"
+                                >
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="btn-primary w-full inline-flex items-center justify-center">
+                            <i class="fas fa-plus-circle mr-2"></i> Add to Menu
+                        </button>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="p-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <div class="flex items-center">
+                            <div class="w-12 h-12 bg-gradient-to-br from-[#4CAF50] to-[#2E7D32] rounded-xl flex items-center justify-center mr-4">
+                                <i class="fas fa-list text-white text-xl"></i>
+                            </div>
+                            <div>
+                                <h2 class="text-2xl font-bold text-[#5D4037]">Menu Items</h2>
+                                <p class="text-[#8D6E63]"><%= items.length %> item(s) in menu</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <% if (items.length === 0) { %>
+                        <div class="text-center py-12">
+                            <i class="fas fa-utensils text-4xl text-gray-300 mb-4"></i>
+                            <p class="text-gray-500">No menu items yet. Add your first item!</p>
+                        </div>
+                    <% } else { %>
+                        <div class="max-h-[500px] overflow-y-auto">
+                            <% items.forEach(it => { %>
+                                <div class="menu-item-card">
+                                    <div class="flex-1">
+                                        <div class="flex items-start">
+                                            <div class="w-10 h-10 bg-gradient-to-br from-[#FFE0B2] to-[#FFCC80] rounded-lg flex items-center justify-center mr-4">
+                                                <i class="fas fa-utensil-spoon text-[#FF5722]"></i>
+                                            </div>
+                                            <div>
+                                                <h3 class="font-bold text-lg text-[#5D4037]"><%= it.name %></h3>
+                                                <% if (it.description) { %>
+                                                    <p class="text-[#8D6E63] text-sm mt-1"><%= it.description %></p>
+                                                <% } %>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex items-center space-x-4">
+                                        <div class="price-tag">$<%= it.price %></div>
+                                        
+                                        <form action="/restaurant/menu/delete/<%= it._id %>" method="POST" class="inline-block">
+                                            <button 
+                                                type="submit" 
+                                                class="btn-danger inline-flex items-center"
+                                                onclick="return confirm('Are you sure you want to delete this menu item?')"
+                                            >
+                                                <i class="fas fa-trash mr-1"></i> Delete
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            <% }) %>
+                        </div>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+        
+        <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="bg-gradient-to-r from-[#FFF3E0] to-[#FFECB3] rounded-xl p-6 border border-[#FFE0B2]">
+                <div class="flex items-center">
+                    <div class="w-12 h-12 bg-white rounded-lg flex items-center justify-center mr-4 shadow-sm">
+                        <i class="fas fa-list text-[#FF9800] text-xl"></i>
+                    </div>
+                    <div>
+                        <p class="text-[#8D6E63] text-sm">Total Items</p>
+                        <p class="text-2xl font-bold text-[#5D4037]"><%= items.length %></p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-gradient-to-r from-[#FFF3E0] to-[#FFECB3] rounded-xl p-6 border border-[#FFE0B2]">
+                <div class="flex items-center">
+                    <div class="w-12 h-12 bg-white rounded-lg flex items-center justify-center mr-4 shadow-sm">
+                        <i class="fas fa-dollar-sign text-[#4CAF50] text-xl"></i>
+                    </div>
+                    <div>
+                        <p class="text-[#8D6E63] text-sm">Average Price</p>
+                        <p class="text-2xl font-bold text-[#5D4037]">
+                            $<%= items.length > 0 ? (items.reduce((sum, item) => sum + parseFloat(item.price), 0) / items.length).toFixed(2) : '0.00' %>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-gradient-to-r from-[#FFF3E0] to-[#FFECB3] rounded-xl p-6 border border-[#FFE0B2]">
+                <div class="flex items-center">
+                    <div class="w-12 h-12 bg-white rounded-lg flex items-center justify-center mr-4 shadow-sm">
+                        <i class="fas fa-clock text-[#2196F3] text-xl"></i>
+                    </div>
+                    <div>
+                        <p class="text-[#8D6E63] text-sm">Last Updated</p>
+                        <p class="text-2xl font-bold text-[#5D4037]">Now</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.card');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                
+                setTimeout(() => {
+                    card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+            
+            const menuItems = document.querySelectorAll('.menu-item-card');
+            menuItems.forEach((item, index) => {
+                item.style.opacity = '0';
+                item.style.transform = 'translateX(-20px)';
+                
+                setTimeout(() => {
+                    item.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                    item.style.opacity = '1';
+                    item.style.transform = 'translateX(0)';
+                }, index * 50 + 300);
+            });
+            
+            const deleteButtons = document.querySelectorAll('.btn-danger');
+            deleteButtons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    if (!confirm('Are you sure you want to delete this menu item?')) {
+                        e.preventDefault();
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
